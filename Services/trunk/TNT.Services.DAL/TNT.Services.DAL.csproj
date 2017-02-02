@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TNT.Services.DAL</RootNamespace>
     <AssemblyName>TNT.Services.DAL</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\TNT.Services.DAL.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,8 +46,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TNT.Data.Tools\bin\Debug\TNT.Data.Tools.dll</HintPath>
     </Reference>
-    <Reference Include="TNT.Utilities">
-      <HintPath>..\TNT.Utilities\bin\Debug\TNT.Utilities.dll</HintPath>
+    <Reference Include="TNT.Utilities, Version=16.6.25.1738, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TNT.Utilities.16.6.25.1738\lib\net45\TNT.Utilities.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +67,9 @@
       <Project>{431C8D83-091D-40EE-9B0D-A0A0B3DB8182}</Project>
       <Name>TNT.Services.Objects</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

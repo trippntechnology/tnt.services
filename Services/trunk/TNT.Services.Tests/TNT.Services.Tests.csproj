@@ -10,8 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TNT.Services.Tests</RootNamespace>
     <AssemblyName>TNT.Services.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,31 +33,26 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\Externals\SQLite\System.Data.SQLite.DLL</HintPath>
-    </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TNT.SQLite, Version=1.0.615.615, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\TNT.SQLite\TNT.SQLite.dll</HintPath>
+    <Reference Include="TNT.Utilities, Version=16.6.25.1738, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TNT.Utilities.16.6.25.1738\lib\net45\TNT.Utilities.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="TNT.Utilities, Version=1.0.612.612, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TNT.Utilities\bin\Debug\TNT.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="TNT.WCF.Utilities, Version=1.0.566.568, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TNT.WCF.Utilities\bin\Debug\TNT.WCF.Utilities.dll</HintPath>
+    <Reference Include="TNT.WCF.Utilities, Version=17.2.1.2009, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TNT.WCF.Utilities.17.2.1.2009\lib\net35\TNT.WCF.Utilities.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +68,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TNT.Services.Contracts\TNT.Services.Contracts.csproj">
@@ -83,6 +83,9 @@
       <Project>{431C8D83-091D-40EE-9B0D-A0A0B3DB8182}</Project>
       <Name>TNT.Services.Objects</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
