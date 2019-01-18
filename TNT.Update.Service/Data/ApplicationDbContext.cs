@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace TNT.Update.Service.Data
@@ -12,5 +9,8 @@ namespace TNT.Update.Service.Data
 				: base(options)
 		{
 		}
+		public DbSet<TNT.Update.Service.Models.Application> Application { get; set; }
+
+		public DbSet<TNT.Update.Service.Models.Release> Release { get; set; }
 	}
 }
