@@ -1,0 +1,9 @@
+**/*.user
+**/*.sqlite
+**/bin/**
+**/obj/**
+**/.vs/**
+packages
+_*/
+**/*.coverage
+Documentation/help
