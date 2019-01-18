@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TNT.Update.Service.Data;
 using TNT.Update.Service.Models;
+using TNT.Update.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
 {

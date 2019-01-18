@@ -15,5 +15,10 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <ProjectReference Include="..\TNT.Update.Models\TNT.Update.Models.csproj" />
+  </ItemGroup>
+
+
 
 </Project>

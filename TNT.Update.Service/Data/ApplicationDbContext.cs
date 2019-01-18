@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TNT.Update.Service.Models.Entities;
 
 namespace TNT.Update.Service.Data
 {
@@ -9,8 +10,8 @@ namespace TNT.Update.Service.Data
 				: base(options)
 		{
 		}
-		public DbSet<TNT.Update.Service.Models.Application> Application { get; set; }
+		public DbSet<Application> Application { get; set; }
 
-		public DbSet<TNT.Update.Service.Models.Release> Release { get; set; }
+		public DbSet<Release> Release { get; set; }
 	}
 }

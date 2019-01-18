@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TNT.Update.Service.Models
+namespace TNT.Update.Service.Models.Entities
 {
 	public class Application
 	{

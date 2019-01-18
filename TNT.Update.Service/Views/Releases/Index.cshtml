@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TNT.Update.Service.Models.Release>
+﻿@model IEnumerable<TNT.Update.Service.Models.Entities.Release>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.ApplicationID)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Package)
+                @Html.DisplayNameFor(model => model.Version)
             </th>
             <th></th>
         </tr>
@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.ApplicationID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Package)
+                @Html.DisplayFor(modelItem => item.Version)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
