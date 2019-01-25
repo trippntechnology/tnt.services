@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using TNT.Update.Models;
+using TNT.Update.Models.Exceptions;
 using TNT.Update.Service.Data;
-using TNT.Update.Service.Models;
 using TNT.Update.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
@@ -19,25 +19,37 @@ namespace TNT.Update.Service.Controllers
 		}
 
 		[HttpGet]
-		public string TestConnection()
+		public Response TestConnection()
 		{
-			return "Congratulations! You have successfully connected.";
+			return new Response() { Message = "Congratulations! You have successfully connected." };
 		}
 
 		[HttpPost]
-		public string Upload(ReleaseRequest releaseRequest)
+		public Response Upload(ReleaseRequest releaseRequest)
 		{
-			var release = new Release()
+			try
 			{
-				ApplicationID = releaseRequest.ApplicationID,
-				Version = releaseRequest.Version.ToString(),
-				Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile)
-			};
+				var application =_context.Application.Find(releaseRequest.ApplicationID);
 
-			_context.Release.Add(release);
-			_context.SaveChanges();
+				if (application == null) throw new InvalidApplicationIdException();
 
-			return "success";
+				var release = new Release()
+				{
+					ApplicationID = releaseRequest.ApplicationID,
+					Version = releaseRequest.Version.ToString(),
+					Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile)
+				};
+
+				_context.Release.Add(release);
+				_context.SaveChanges();
+
+			}
+			catch (Exception ex)
+			{
+				return new Response(ex);
+			}
+
+			return new Response();
 		}
 	}
 }

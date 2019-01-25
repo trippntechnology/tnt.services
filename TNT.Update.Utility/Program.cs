@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Diagnostics;
 using System.IO;
 using TNT.Update.Models;
 
@@ -10,12 +11,28 @@ namespace TNT.Upload.Utility
 	{
 		static void Main(string[] args)
 		{
+			var parameters = new Parameters();
+
+			if (!parameters.ParseArgs(args)) return;
+			System.Diagnostics.Debugger.Launch();
+
+			var fi = new FileInfo(parameters.FilePath);
+
+			var fvi = FileVersionInfo.GetVersionInfo(fi.FullName);
+			//var ass = Assembly.LoadFile(fi.FullName);
+
+
+
+			//var fileVersion = Utilities.Utilities.GetAssemblyAttribute<AssemblyFileVersionAttribute>(ass);
+			//var infoVersion =Utilities.Utilities.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(ass);
+			//var version = Utilities.Utilities.GetAssemblyAttribute<AssemblyVersionAttribute>(ass);
+
 			//System.Diagnostics.Debugger.Launch();
 			var relReq = new ReleaseRequest();
 
-			relReq.ApplicationID = int.Parse(args[0]);
-			relReq.Version = args[1];
-			string fileName = args[2];
+			relReq.ApplicationID = parameters.ApplicationId;
+			relReq.Version = fvi.FileVersion;
+			string fileName = Path.GetFileName(fvi.FileName);
 
 			var client = new RestClient("https://localhost:44328/api/v1");
 
@@ -32,7 +49,21 @@ namespace TNT.Upload.Utility
 
 			try
 			{
-				var response = client.Execute(request);
+				var restResponse = client.Execute(request);
+
+				if (restResponse.IsSuccessful )
+				{
+					var response = JsonConvert.DeserializeObject<Response>(restResponse.Content);
+
+					if (response.IsSuccess)
+					{
+						Console.WriteLine("Application updated successfully");
+					}
+					else
+					{
+						Console.WriteLine(response.Message);
+					}
+				}
 				//client.ExecuteAsync(request, response =>
 				//{
 				//	if (response.StatusCode == HttpStatusCode.OK)
