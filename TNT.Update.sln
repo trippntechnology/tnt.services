@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNT.Upload.Utility", "TNT.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNT.Services.Models", "TNT.Services.Models\TNT.Services.Models.csproj", "{C5020C12-ADD8-4305-A757-CC9E0D5D4458}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNT.Services.Client", "TNT.Services.Client\TNT.Services.Client.csproj", "{373B2C94-8B23-4FF9-AD16-1E5D79C45718}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C5020C12-ADD8-4305-A757-CC9E0D5D4458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5020C12-ADD8-4305-A757-CC9E0D5D4458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5020C12-ADD8-4305-A757-CC9E0D5D4458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{373B2C94-8B23-4FF9-AD16-1E5D79C45718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{373B2C94-8B23-4FF9-AD16-1E5D79C45718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{373B2C94-8B23-4FF9-AD16-1E5D79C45718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{373B2C94-8B23-4FF9-AD16-1E5D79C45718}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

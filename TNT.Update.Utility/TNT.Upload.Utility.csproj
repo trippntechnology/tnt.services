@@ -34,12 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=106.6.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.7\lib\net452\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -63,6 +57,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TNT.Services.Client\TNT.Services.Client.csproj">
+      <Project>{373b2c94-8b23-4ff9-ad16-1e5d79c45718}</Project>
+      <Name>TNT.Services.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TNT.Services.Models\TNT.Services.Models.csproj">
       <Project>{c5020c12-add8-4305-a757-cc9e0d5d4458}</Project>
       <Name>TNT.Services.Models</Name>
