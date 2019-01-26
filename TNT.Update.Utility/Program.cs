@@ -3,7 +3,7 @@ using RestSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
-using TNT.Update.Models;
+using TNT.Services.Models;
 
 namespace TNT.Upload.Utility
 {
@@ -51,7 +51,7 @@ namespace TNT.Upload.Utility
 			{
 				var restResponse = client.Execute(request);
 
-				if (restResponse.IsSuccessful )
+				if (restResponse.IsSuccessful)
 				{
 					var response = JsonConvert.DeserializeObject<Response>(restResponse.Content);
 

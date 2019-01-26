@@ -63,9 +63,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TNT.Update.Models\TNT.Update.Models.csproj">
-      <Project>{1e3b5e55-2ec3-41c5-ae9b-cd1cdf30fd18}</Project>
-      <Name>TNT.Update.Models</Name>
+    <ProjectReference Include="..\TNT.Services.Models\TNT.Services.Models.csproj">
+      <Project>{c5020c12-add8-4305-a757-cc9e0d5d4458}</Project>
+      <Name>TNT.Services.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

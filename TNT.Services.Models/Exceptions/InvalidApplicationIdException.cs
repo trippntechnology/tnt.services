@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TNT.Update.Models.Exceptions
+namespace TNT.Services.Models.Exceptions
 {
 	/// <summary>
 	/// <see cref="Exception"/> indicating that the ID specified for the application is not valid.

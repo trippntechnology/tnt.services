@@ -16,7 +16,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\TNT.Update.Models\TNT.Update.Models.csproj" />
+    <ProjectReference Include="..\TNT.Services.Models\TNT.Services.Models.csproj" />
   </ItemGroup>
 
 

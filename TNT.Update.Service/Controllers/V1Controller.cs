@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using TNT.Update.Models;
-using TNT.Update.Models.Exceptions;
+using TNT.Services.Models;
+using TNT.Services.Models.Exceptions;
 using TNT.Update.Service.Data;
 using TNT.Update.Service.Models.Entities;
 
@@ -29,7 +29,7 @@ namespace TNT.Update.Service.Controllers
 		{
 			try
 			{
-				var application =_context.Application.Find(releaseRequest.ApplicationID);
+				var application = _context.Application.Find(releaseRequest.ApplicationID);
 
 				if (application == null) throw new InvalidApplicationIdException();
 
