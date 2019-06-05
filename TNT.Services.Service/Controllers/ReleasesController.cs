@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using TNT.Services.Service.Data;
-using TNT.Update.Service.Models;
 using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
