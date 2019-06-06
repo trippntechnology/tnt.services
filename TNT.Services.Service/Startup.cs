@@ -70,7 +70,7 @@ namespace TNT.Services.Service
 			{
 				routes.MapRoute(
 									name: "default",
-									template: "{controller=Applications}/{action=Index}/{id?}");
+									template: "{controller=Home}/{action=Index}/{id?}");
 			});
 		}
 	}

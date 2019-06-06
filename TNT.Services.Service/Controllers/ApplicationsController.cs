@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
 {
+	[Authorize]
 	public class ApplicationsController : Controller
 	{
 		private readonly ApplicationDbContext _context;
