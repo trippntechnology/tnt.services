@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using TNT.Services.Service.Data;
+using TNT.Services.Service.Models;
 using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
@@ -19,9 +20,17 @@ namespace TNT.Update.Service.Controllers
 		}
 
 		// GET: Applications
-		public async Task<IActionResult> Index()
+		public IActionResult Index()
 		{
-			return View(await _context.Application.ToListAsync());
+			var applications = _context.Application.ToList();
+			var releases = _context.Release.ToList();
+
+			var applicationPluses = (from a in applications
+															 join r in releases on a.ID equals r.ApplicationID into join1
+															 from r1 in join1.DefaultIfEmpty()
+															 select new ApplicationPlus() { ID = a.ID, Name = a.Name, Version = r1 == null ? "" : r1.Version });
+
+			return View(applicationPluses);
 		}
 
 		// GET: Applications/Details/5
