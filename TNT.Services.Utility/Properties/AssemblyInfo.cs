@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TNT.Upload.Utility")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TNT.Services.Utility")]
+[assembly: AssemblyDescription("TNT Services Utilities")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TNT.Upload.Utility")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyProduct("TNT.Services.Utility")]
+[assembly: AssemblyCopyright("Copyright 2019 Tripp'n Technology, LLC.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
