@@ -9,7 +9,7 @@ namespace TNT.Services.Service.Controllers
 {
 	[Route("api/[controller]/[action]")]
 	[ApiController]
-	public class V1Controller : ControllerBase
+	public class V1Controller : BaseController
 	{
 		private readonly ApplicationDbContext _context;
 
@@ -33,11 +33,13 @@ namespace TNT.Services.Service.Controllers
 
 				if (application == null) throw new InvalidApplicationIdException();
 
+				var package = Convert.FromBase64String(releaseRequest.Base64EncodedFile);
+
 				var release = new Release()
 				{
 					ApplicationID = releaseRequest.ApplicationID,
-					Version = releaseRequest.Version.ToString(),
-					Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile),
+					Version = GetVersion(package),
+					Package = package,
 					Date = DateTime.Now,
 					FileName = releaseRequest.FileName
 				};

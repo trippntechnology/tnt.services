@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TNT.Services.Models.Exceptions;
+using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
 using TNT.Services.Service.Models;
 using TNT.Services.Service.Models.Entities;
@@ -15,9 +15,8 @@ using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
 {
-	public class ReleasesController : Controller
+	public class ReleasesController : BaseController
 	{
-		const string TEMP_FILE_PATH = "wwwroot/uploads";
 		private readonly ApplicationDbContext _context;
 
 		public ReleasesController(ApplicationDbContext context)
@@ -89,7 +88,7 @@ namespace TNT.Update.Service.Controllers
 					release.Package = reader.ReadBytes((int)upload.Length);
 				}
 
-				release.Version = GetVersion(release.Package);// fileVersion.Version;
+				release.Version = GetVersion(release.Package);
 				release.Date = DateTime.Now;
 				release.FileName = upload.FileName;
 
@@ -98,34 +97,6 @@ namespace TNT.Update.Service.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 			return View(release);
-		}
-
-		public string GetVersion(byte[] package)
-		{
-			string version = String.Empty;
-			string fileName = String.Empty;
-
-			try
-			{
-				if (!Directory.Exists(TEMP_FILE_PATH))
-				{
-					Directory.CreateDirectory(TEMP_FILE_PATH);
-				}
-
-				fileName = Path.Combine(TEMP_FILE_PATH, Guid.NewGuid().ToString());
-				System.IO.File.WriteAllBytes(fileName, package);
-				version = FileVersionInfo.GetVersionInfo(fileName)?.FileVersion;
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine(ex.Message);
-			}
-			finally
-			{
-				if (!String.IsNullOrEmpty(fileName)) System.IO.File.Delete(fileName);
-			}
-
-			return version;
 		}
 
 		// GET: Releases/Edit/5
