@@ -1,41 +1,52 @@
-﻿@model IEnumerable<TNT.Services.Service.Models.Entities.Release>
+﻿@model IEnumerable<TNT.Services.Service.Models.ReleasePlus>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
 <h1>Releases</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Create">Create New</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Version)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Version)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.ApplicationName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Version)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Date)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.FileName)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.ApplicationName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Version)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Date)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.FileName)
+				</td>
+				<td>
+					<a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

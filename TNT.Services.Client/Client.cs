@@ -18,19 +18,21 @@ namespace TNT.Services.Client
 			_RestClient = new RestClient(apiUri);
 		}
 
-		public Response Upload(int applicationId, string fileName)
+		public Response Upload(int applicationId, string qualifiedFileName)
 		{
 			Response response = null;
 
 			try
 			{
-				var fileBytes = File.ReadAllBytes(fileName);
+				var fileBytes = File.ReadAllBytes(qualifiedFileName);
+				var fileName = Path.GetFileName(qualifiedFileName);
 
 				var releaseRequest = new ReleaseRequest()
 				{
 					ApplicationID = applicationId,
-					Version = GetVersion(fileName),
-					Base64EncodedFile = Convert.ToBase64String(fileBytes)
+					Version = GetVersion(qualifiedFileName),
+					Base64EncodedFile = Convert.ToBase64String(fileBytes),
+					FileName = fileName
 				};
 
 				var restRequest = new RestRequest(UPLOAD_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(releaseRequest);

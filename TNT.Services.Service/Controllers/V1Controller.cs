@@ -37,7 +37,9 @@ namespace TNT.Services.Service.Controllers
 				{
 					ApplicationID = releaseRequest.ApplicationID,
 					Version = releaseRequest.Version.ToString(),
-					Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile)
+					Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile),
+					Date = DateTime.Now,
+					FileName = releaseRequest.FileName
 				};
 
 				_context.Release.Add(release);

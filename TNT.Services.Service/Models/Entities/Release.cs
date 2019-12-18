@@ -1,4 +1,6 @@
-﻿namespace TNT.Services.Service.Models.Entities
+﻿using System;
+
+namespace TNT.Services.Service.Models.Entities
 {
 	public class Release
 	{
@@ -7,5 +9,6 @@
 		public string FileName { get; set; }
 		public string Version { get; set; }
 		public byte[] Package { get; set; }
+		public DateTime Date { get; set; }
 	}
 }

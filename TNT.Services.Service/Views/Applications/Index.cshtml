@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TNT.Services.Service.Models.ApplicationPlus>
+﻿@model IEnumerable<TNT.Services.Service.Models.Entities.Application>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,9 +18,6 @@
 				<th>
 					@Html.DisplayNameFor(model => model.Name)
 				</th>
-				<th>
-					@Html.DisplayNameFor(model => model.Version)
-				</th>
 			</tr>
     </thead>
     <tbody>
@@ -31,9 +28,6 @@
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.Name)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Version)
 				</td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
