@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using TNT.Services.Models;
 using TNT.Services.Models.Exceptions;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
 using TNT.Services.Service.Data;
-using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Services.Service.Controllers
 {
