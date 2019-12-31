@@ -61,7 +61,7 @@ namespace TNT.Services.Service.Controllers
 
 			try
 			{
-				var release = _context.Release.Find(releaseRequest.ReleaseId);
+				var release = _context.Release.Where(r => r.ID == releaseRequest.ReleaseId).FirstOrDefault();
 				if (release == null) throw new ReleaseNotFoundException(releaseRequest.ReleaseId, "Release ID, {0}, could not be found");
 
 				response = new ReleaseResponse()
@@ -78,59 +78,5 @@ namespace TNT.Services.Service.Controllers
 
 			return response;
 		}
-
-		[HttpPost]
-		public ReleaseResponse GetUpdate(UpdateRequest updateRequest)
-		{
-			try
-			{
-				if (updateRequest == null) throw new NullReferenceException("UpdateRequest can not be null");
-
-				var application = _context.Application.Find(updateRequest.ApplicationID);
-
-				if (application == null) throw new InvalidApplicationIdException();
-
-				var release = _context.Release.Where(r => r.ApplicationID == application.ID && r.Version.ToVersion() > updateRequest.CurrentVersion.ToVersion()).ToList();
-
-			}
-			catch (Exception ex)
-			{
-				return new ReleaseResponse(ex);
-			}
-
-			return new ReleaseResponse();
-		}
-
-		//	[HttpPost]
-		//	public Response Upload(ReleaseRequest releaseRequest)
-		//	{
-		//		try
-		//		{
-		//			var application = _context.Application.Find(releaseRequest.ApplicationID);
-
-		//			if (application == null) throw new InvalidApplicationIdException();
-
-		//			var package = Convert.FromBase64String(releaseRequest.Base64EncodedFile);
-
-		//			var release = new Release()
-		//			{
-		//				ApplicationID = releaseRequest.ApplicationID,
-		//				Version = GetVersion(package),
-		//				Package = package,
-		//				Date = DateTime.Now,
-		//				FileName = releaseRequest.FileName
-		//			};
-
-		//			_context.Release.Add(release);
-		//			_context.SaveChanges();
-
-		//		}
-		//		catch (Exception ex)
-		//		{
-		//			return new Response(ex);
-		//		}
-
-		//		return new Response();
-		//	}
 	}
 }

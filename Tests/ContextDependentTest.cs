@@ -3,6 +3,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TNT.Services.Service.Models.Entities;
 
 namespace Tests
@@ -37,7 +38,13 @@ namespace Tests
 				{
 					_Releases = new List<Release>
 					{
-						new Release() { ApplicationID = 1, Date = DateTime.Now, FileName = "setup.exe", ID = 1, Version = "1.2.3.4" }
+						new Release() {
+							ApplicationID = 1,
+							Date = DateTime.Now,
+							FileName = "setup.exe",
+							ID = 1,
+							Package = Encoding.ASCII.GetBytes("Package"),
+							Version = "1.2.3.4" }
 					};
 				}
 				return _Releases;
