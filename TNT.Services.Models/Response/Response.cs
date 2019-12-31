@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TNT.Services.Models
+namespace TNT.Services.Models.Response
 {
 	/// <summary>
 	/// Base response to API requests

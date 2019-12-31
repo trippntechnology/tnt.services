@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using TNT.Services.Service.Data;
-using TNT.Services.Service.Models;
 using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers

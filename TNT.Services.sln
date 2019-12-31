@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNT.Services.Utility", "TNT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNT.Services.Service", "TNT.Services.Service\TNT.Services.Service.csproj", "{535F3FE3-D845-424E-8A58-A83EB2BD31B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C8586708-B3B8-4C80-8B52-843C480C3082}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{535F3FE3-D845-424E-8A58-A83EB2BD31B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{535F3FE3-D845-424E-8A58-A83EB2BD31B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{535F3FE3-D845-424E-8A58-A83EB2BD31B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8586708-B3B8-4C80-8B52-843C480C3082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8586708-B3B8-4C80-8B52-843C480C3082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8586708-B3B8-4C80-8B52-843C480C3082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8586708-B3B8-4C80-8B52-843C480C3082}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

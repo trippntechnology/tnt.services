@@ -13,9 +13,6 @@ namespace TNT.Services.Models.Exceptions
 		/// Default constructor
 		/// </summary>
 		/// <param name="message">Message that can be included with the exception</param>
-		public InvalidApplicationIdException(string message = DEFAULT_MESSAGE) : base(message)
-		{
-
-		}
+		public InvalidApplicationIdException(string message = DEFAULT_MESSAGE) : base(message) { }
 	}
 }
