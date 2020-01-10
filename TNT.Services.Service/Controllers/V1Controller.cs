@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using TNT.Services.Models;
+using System.Linq;
 using TNT.Services.Models.Exceptions;
+using TNT.Services.Models.Request;
+using TNT.Services.Models.Response;
 using TNT.Services.Service.Data;
-using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Services.Service.Controllers
 {
 	[Route("api/[controller]/[action]")]
 	[ApiController]
-	public class V1Controller : ControllerBase
+	public class V1Controller : BaseController
 	{
 		private readonly ApplicationDbContext _context;
 
@@ -25,31 +26,57 @@ namespace TNT.Services.Service.Controllers
 		}
 
 		[HttpPost]
-		public Response Upload(ReleaseRequest releaseRequest)
+		public ApplicationInfo GetApplicationInfo(ApplicationRequest applicationRequest)
 		{
+			ApplicationInfo response = null;
+
 			try
 			{
-				var application = _context.Application.Find(releaseRequest.ApplicationID);
+				var application = _context.Application.Where(a => a.ID == applicationRequest.ApplicationID).FirstOrDefault();
+				if (application == null) throw new ApplicationNotFoundException(applicationRequest.ApplicationID);
 
-				if (application == null) throw new InvalidApplicationIdException();
+				var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
+				if (release == null) throw new ReleaseNotFoundException(application.ID);
 
-				var release = new Release()
+				response = new ApplicationInfo
 				{
-					ApplicationID = releaseRequest.ApplicationID,
-					Version = releaseRequest.Version.ToString(),
-					Package = Convert.FromBase64String(releaseRequest.Base64EncodedFile)
+					Name = application.Name,
+					ReleaseID = release.ID,
+					ReleaseDate = release.Date,
+					ReleaseVersion = release.Version
 				};
-
-				_context.Release.Add(release);
-				_context.SaveChanges();
-
 			}
 			catch (Exception ex)
 			{
-				return new Response(ex);
+				response = new ApplicationInfo(ex);
 			}
 
-			return new Response();
+			return response;
+		}
+
+		[HttpPost]
+		public ReleaseResponse GetRelease(ReleaseRequest releaseRequest)
+		{
+			ReleaseResponse response;
+
+			try
+			{
+				var release = _context.Release.Where(r => r.ID == releaseRequest.ReleaseId).FirstOrDefault();
+				if (release == null) throw new ReleaseNotFoundException(releaseRequest.ReleaseId, "Release ID, {0}, could not be found");
+
+				response = new ReleaseResponse()
+				{
+					FileName = release.FileName,
+					Package = Convert.ToBase64String(release.Package),
+					ReleaseDate = release.Date
+				};
+			}
+			catch (Exception ex)
+			{
+				response = new ReleaseResponse(ex);
+			}
+
+			return response;
 		}
 	}
 }

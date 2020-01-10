@@ -6,34 +6,31 @@
 
 <h1>Create</h1>
 
-<h4>Release</h4>
-<hr />
-<div class="row">
-	<div class="col-md-4">
-		<form asp-action="Create" enctype="multipart/form-data">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label asp-for="ApplicationID" class="control-label"></label>
-				<input asp-for="ApplicationID" class="form-control" />
-				<span asp-validation-for="ApplicationID" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<div class="col-md-10">
-					<p>Upload one or more files using this form:</p>
-					<input type="file" name="files" />
+@using (Html.BeginForm("Create", "Releases", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+	<h4>Release</h4>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="Create" enctype="multipart/form-data">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group">
+					<label class="control-label">Application</label>
+					<select asp-for="ApplicationID" asp-items="ViewBag.Applications" class="form-control"></select>
+					<span asp-validation-for="ApplicationID" class="text-danger"></span>
 				</div>
-			</div>
-			<div class="form-group">
-				<label asp-for="Package" class="control-label"></label>
-				<input asp-for="Package" class="form-control" />
-				<span asp-validation-for="Package" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<input type="submit" value="Create" class="btn btn-primary" />
-			</div>
-		</form>
+				<div class="form-group">
+					<div class="col-md-10">
+						<input type="file" id="Avatar" name="upload" />
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-primary" />
+				</div>
+			</form>
+		</div>
 	</div>
-</div>
+}
 
 <div>
 	<a asp-action="Index">Back to List</a>

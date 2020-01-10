@@ -68,7 +68,8 @@ namespace TNT.Services.Service.Migrations
                     ApplicationID = table.Column<int>(nullable: false),
                     FileName = table.Column<string>(nullable: true),
                     Version = table.Column<string>(nullable: true),
-                    Package = table.Column<byte[]>(nullable: true)
+                    Package = table.Column<byte[]>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

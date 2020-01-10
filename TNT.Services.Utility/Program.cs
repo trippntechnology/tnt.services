@@ -9,15 +9,15 @@ namespace TNT.Upload.Utility
 	{
 		static void Main(string[] args)
 		{
-			var parameters = new Parameters();
-			var client = new Client(new Uri("https://localhost:44328/api/v1"));
+			var arguments = new Arguments();
+			var client = new Client(new Uri("https://localhost:5001/api/v1"));
 
-			if (!parameters.ParseArgs(args)) return;
+			if (!arguments.Parse(args)) return;
 
-			var fi = new FileInfo(parameters.FilePath);
+			var fi = new FileInfo(arguments.FilePath);
 			var fvi = FileVersionInfo.GetVersionInfo(fi.FullName);
 
-			var response = client.Upload(parameters.ApplicationId, fvi.FileName);
+			var response = client.Upload(arguments.ApplicationId, fvi.FileName);
 
 			if (response.IsSuccess)
 			{

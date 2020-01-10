@@ -10,8 +10,8 @@ namespace TNT.Services.Service.Data
 				: base(options)
 		{
 		}
-		public DbSet<Application> Application { get; set; }
+		public virtual DbSet<Application> Application { get; set; }
 
-		public DbSet<Release> Release { get; set; }
+		public virtual DbSet<Release> Release { get; set; }
 	}
 }
