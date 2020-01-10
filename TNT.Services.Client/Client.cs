@@ -1,15 +1,17 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Diagnostics;
-using System.IO;
-using TNT.Services.Models;
+using System.Threading.Tasks;
+using TNT.Services.Models.Request;
+using TNT.Services.Models.Response;
 
 namespace TNT.Services.Client
 {
 	public class Client
 	{
 		const string UPLOAD_ENDPOINT = "/Upload/";
+		private const string APPLICATION_INFO_ENDPOINT = "/GetApplicationInfo/";
+		private const string RELEASE_ENDPOINT = "/GetRelease/";
 
 		protected IRestClient _RestClient;
 
@@ -18,47 +20,52 @@ namespace TNT.Services.Client
 			_RestClient = new RestClient(apiUri);
 		}
 
-		public Response Upload(int applicationId, string qualifiedFileName)
+		public ApplicationInfo GetApplicationInfo(int appId)
 		{
-			Response response = null;
+			var appRequest = new ApplicationRequest() { ApplicationID = appId };
+			var request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(appRequest);
+			var response = _RestClient.Execute(request);
 
-			try
+			ApplicationInfo appInfo;
+			if (response.IsSuccessful)
 			{
-				var fileBytes = File.ReadAllBytes(qualifiedFileName);
-				var fileName = Path.GetFileName(qualifiedFileName);
-
-				var releaseRequest = new ReleaseRequest()
-				{
-					ApplicationID = applicationId,
-					Version = GetVersion(qualifiedFileName),
-					Base64EncodedFile = Convert.ToBase64String(fileBytes),
-					FileName = fileName
-				};
-
-				var restRequest = new RestRequest(UPLOAD_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(releaseRequest);
-				var restResponse = _RestClient.Execute(restRequest);
-
-				if (restResponse.IsSuccessful)
-				{
-					response = JsonConvert.DeserializeObject<Response>(restResponse.Content);
-				}
-				else
-				{
-					response = new Response(restResponse.ErrorException);
-				}
+				appInfo = JsonConvert.DeserializeObject<ApplicationInfo>(response.Content);
 			}
-			catch (Exception error)
+			else
 			{
-				response = new Response(error);
+				appInfo = new ApplicationInfo(response.ErrorException);
 			}
 
-			return response;
+			return appInfo;
 		}
 
-		private static string GetVersion(string fileName)
+		public Task<ApplicationInfo> GetApplicationInfoAsync(int appid)
 		{
-			var fvi = FileVersionInfo.GetVersionInfo(fileName);
-			return fvi.FileVersion;
+			return Task.Run(() => { return GetApplicationInfo(appid); });
+		}
+
+		public ReleaseResponse GetRelease(int releaseId)
+		{
+			var releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
+			var request = new RestRequest(RELEASE_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(releaseRequest);
+			var response = _RestClient.Execute(request);
+
+			ReleaseResponse releaseResponse;
+			if (response.IsSuccessful)
+			{
+				releaseResponse = JsonConvert.DeserializeObject<ReleaseResponse>(response.Content);
+			}
+			else
+			{
+				releaseResponse = new ReleaseResponse(response.ErrorException);
+			}
+
+			return releaseResponse;
+		}
+
+		public Task<ReleaseResponse> GetReleaseAsync(int releaseId)
+		{
+			return Task.Run(() => { return GetRelease(releaseId); });
 		}
 	}
 }

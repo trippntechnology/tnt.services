@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using TNT.Configuration;
+using TNT.Services.Client;
+using TNT.Services.Models.Response;
+using TNT.Updater.Properties;
 
 namespace TNT.Updater
 {
@@ -14,6 +16,8 @@ namespace TNT.Updater
 		[STAThread]
 		static void Main()
 		{
+			Settings settings = XmlSection<Settings>.Deserialize("SettingsSection");
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
@@ -26,12 +30,36 @@ namespace TNT.Updater
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				MessageBox.Show(arguments.Usage(ex));
 				return;
 			}
-			System.Diagnostics.Debugger.Launch();
 
-			Application.Run(new Form1());
+			ApplicationInfo appInfo = null;
+			try
+			{
+				var client = new Client(settings.EndpointUri);
+				appInfo = client.GetApplicationInfo(arguments.ApplicationId);
+				if (!appInfo.IsSuccess) throw new Exception(appInfo.Message);
+			}
+			catch (Exception ex)
+			{
+				if (!arguments.IsSilentMode)
+				{
+					var caption = string.Format(Resources.Caption, arguments.ProductName);
+					MessageBox.Show(ex.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+					return;
+				}
+			}
+
+			var installedVersion = arguments.FileVersion;
+			var currentVersion = Version.Parse(appInfo.ReleaseVersion);
+
+			if (arguments.IsSilentMode && installedVersion == currentVersion)
+			{
+				return;
+			}
+
+			Application.Run(new Form1(arguments, appInfo, settings));
 		}
 	}
 }
