@@ -10,6 +10,8 @@ using TNT.Services.Service.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace TNT.Services.Service
 {
 	public class Startup
@@ -41,19 +43,21 @@ namespace TNT.Services.Service
 			services.AddControllersWithViews();
 			services.AddRazorPages();
 
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-			{
-				options.RequireHttpsMetadata = false;
-				options.SaveToken = true;
-				options.TokenValidationParameters = new TokenValidationParameters()
+			services.AddAuthentication()
+				.AddJwtBearer(options =>
 				{
-					ValidateIssuer = true,
-					ValidateAudience = true,
-					ValidAudience = Configuration["Jwt:Audience"],
-					ValidIssuer = Configuration["Jwt:Issuer"],
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-				};
-			});
+					options.RequireHttpsMetadata = false;
+					options.SaveToken = true;
+					options.TokenValidationParameters = new TokenValidationParameters()
+					{
+						ValidateIssuer = true,
+						ValidateAudience = true,
+						ValidateLifetime = true,
+						ValidAudience = Configuration["Jwt:Audience"],
+						ValidIssuer = Configuration["Jwt:Issuer"],
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+					};
+				});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
