@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using TNT.Services.Models.Exceptions;
@@ -8,6 +9,7 @@ using TNT.Services.Service.Data;
 
 namespace TNT.Services.Service.Controllers
 {
+	[Authorize]
 	[Route("api/[controller]/[action]")]
 	[ApiController]
 	public class V1Controller : BaseController
