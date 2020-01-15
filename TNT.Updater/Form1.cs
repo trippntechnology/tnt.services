@@ -21,7 +21,7 @@ namespace TNT.Updater
 			InitializeComponent();
 			this.arguments = arguments;
 			this.appInfo = appInfo;
-			this.client = new Client(settings.EndpointUri);
+			this.client = new Client(settings.ApiEndpointUri, settings.TokenEndpointUri);
 
 			Log("Calling InitializeAsync");
 			InitializeAsync();
@@ -50,7 +50,8 @@ namespace TNT.Updater
 		{
 			if (releaseResponse == null)
 			{
-				var response = await client.GetReleaseAsync(appInfo.ReleaseID);
+				var jwt = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
+				var response = await client.GetReleaseAsync(appInfo.ReleaseID, jwt);
 				if (response == null || !response.IsSuccess)
 				{
 					MessageBox.Show(response.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);

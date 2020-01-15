@@ -25,7 +25,7 @@ namespace TNT.Services.Service.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Post(ApplicatoinCredential credential)
+		public ActionResult Post(ApplicationCredential credential)
 		{
 
 			if (credential != null && credential.Password != null)

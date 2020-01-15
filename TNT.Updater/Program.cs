@@ -30,15 +30,16 @@ namespace TNT.Updater
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(arguments.Usage(ex));
+				MessageBox.Show(arguments.Usage(ex), "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
 			ApplicationInfo appInfo = null;
 			try
 			{
-				var client = new Client(settings.EndpointUri);
-				appInfo = client.GetApplicationInfo(arguments.ApplicationId);
+				var client = new Client(settings.ApiEndpointUri, settings.TokenEndpointUri);
+				var jwt = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
+				appInfo = client.GetApplicationInfo(arguments.ApplicationId, jwt);
 				if (!appInfo.IsSuccess) throw new Exception(appInfo.Message);
 			}
 			catch (Exception ex)

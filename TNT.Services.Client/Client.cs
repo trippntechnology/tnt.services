@@ -2,6 +2,7 @@
 using RestSharp;
 using System;
 using System.Threading.Tasks;
+using TNT.Services.Models;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
 
@@ -9,22 +10,25 @@ namespace TNT.Services.Client
 {
 	public class Client
 	{
-		const string UPLOAD_ENDPOINT = "/Upload/";
 		private const string APPLICATION_INFO_ENDPOINT = "/GetApplicationInfo/";
 		private const string RELEASE_ENDPOINT = "/GetRelease/";
 
-		protected IRestClient _RestClient;
+		protected IRestClient apiClient;
+		protected IRestClient tokenClient;
 
-		public Client(Uri apiUri)
+		public Client(Uri apiUri, Uri tokenUri)
 		{
-			_RestClient = new RestClient(apiUri);
+			apiClient = new RestClient(apiUri);
+			tokenClient = new RestClient(tokenUri);
 		}
 
-		public ApplicationInfo GetApplicationInfo(int appId)
+		public ApplicationInfo GetApplicationInfo(int appId, JWT jwt)
 		{
 			var appRequest = new ApplicationRequest() { ApplicationID = appId };
-			var request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(appRequest);
-			var response = _RestClient.Execute(request);
+			var request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.POST, DataFormat.Json)
+				.AddHeader("Authorization", jwt.ToAuthToken)
+				.AddJsonBody(appRequest);
+			var response = apiClient.Execute(request);
 
 			ApplicationInfo appInfo;
 			if (response.IsSuccessful)
@@ -39,16 +43,18 @@ namespace TNT.Services.Client
 			return appInfo;
 		}
 
-		public Task<ApplicationInfo> GetApplicationInfoAsync(int appid)
+		public Task<ApplicationInfo> GetApplicationInfoAsync(int appid, JWT jwt)
 		{
-			return Task.Run(() => { return GetApplicationInfo(appid); });
+			return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
 		}
 
-		public ReleaseResponse GetRelease(int releaseId)
+		public ReleaseResponse GetRelease(int releaseId, JWT jwt)
 		{
 			var releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
-			var request = new RestRequest(RELEASE_ENDPOINT, Method.POST, DataFormat.Json).AddJsonBody(releaseRequest);
-			var response = _RestClient.Execute(request);
+			var request = new RestRequest(RELEASE_ENDPOINT, Method.POST, DataFormat.Json)
+				.AddHeader("Authorization", jwt.ToAuthToken)
+				.AddJsonBody(releaseRequest);
+			var response = apiClient.Execute(request);
 
 			ReleaseResponse releaseResponse;
 			if (response.IsSuccessful)
@@ -63,9 +69,18 @@ namespace TNT.Services.Client
 			return releaseResponse;
 		}
 
-		public Task<ReleaseResponse> GetReleaseAsync(int releaseId)
+		public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
 		{
-			return Task.Run(() => { return GetRelease(releaseId); });
+			return Task.Run(() => { return GetRelease(releaseId, jwt); });
+		}
+
+		public JWT GetJWT(int appId, string password)
+		{
+			var appCredential = new ApplicationCredential() { ApplicationId = appId, Password = password };
+			var request = new RestRequest(Method.POST).AddJsonBody(appCredential);
+			var response = tokenClient.Execute(request);
+			var jwt = JsonConvert.DeserializeObject<string>(response.Content);
+			return new JWT(jwt);
 		}
 	}
 }
