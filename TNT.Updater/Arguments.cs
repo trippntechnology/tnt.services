@@ -10,10 +10,12 @@ namespace TNT.Updater
 	{
 		private const string EXECUTABLE = "e";
 		private const string APP_ID = "i";
+		private const string APP_PASSWORD = "p";
 		private const string SILENT_MODE = "s";
 
 		public string Executable { get { return (this[EXECUTABLE] as FileArgument).Value; } }
 		public int ApplicationId { get { return (this[APP_ID] as IntArgument).Value; } }
+		public string ApplicationPassword { get { return (this[APP_PASSWORD] as StringArgument).Value; } }
 		public bool IsSilentMode { get { return (this[SILENT_MODE] as FlagArgument).Value; } }
 
 		public string CompanyName { get; private set; }
@@ -25,6 +27,7 @@ namespace TNT.Updater
 		{
 			Add(new FileArgument(EXECUTABLE, "Application to update", true, true));
 			Add(new IntArgument(APP_ID, "Application ID", true));
+			Add(new StringArgument(APP_PASSWORD, "Application password", true));
 			Add(new FlagArgument(SILENT_MODE, "Hides dialog when latest version is installed"));
 		}
 

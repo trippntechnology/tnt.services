@@ -4,8 +4,11 @@ namespace TNT.Updater
 {
 	public class Settings
 	{
-		public string Endpoint { get; set; }
+		public string ApiEndpoint { get; set; }
+		public string TokenEndpoint { get; set; }
 
-		public Uri EndpointUri { get { return new Uri(this.Endpoint); } }
+		public Uri ApiEndpointUri { get { return new Uri(this.ApiEndpoint); } }
+
+		public Uri TokenEndpointUri { get { return new Uri(this.TokenEndpoint); } }
 	}
 }

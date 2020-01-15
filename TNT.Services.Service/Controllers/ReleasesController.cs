@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
 {
+	[Authorize]
 	public class ReleasesController : BaseController
 	{
 		private readonly ApplicationDbContext _context;
