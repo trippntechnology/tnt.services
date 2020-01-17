@@ -85,7 +85,7 @@ namespace TNT.Update.Service.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Application application)
+		public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Password")] Application application)
 		{
 			if (id != application.ID)
 			{
