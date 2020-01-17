@@ -33,7 +33,7 @@ namespace TNT.Updater
 			Text = string.Format(Resources.Caption, this.arguments.ProductName);
 			labelInstalledVersion.Text = this.arguments.FileVersion.ToString();
 			labelCurrentVersion.Text = appInfo.ReleaseVersion;
-			labelReleaseDate.Text = appInfo.ReleaseDate.ToString();
+			labelReleaseDate.Text = appInfo.ReleaseDate.ToLocalTime().ToString();
 
 			var installedVersion = this.arguments.FileVersion;
 			var currentVersion = Version.Parse(appInfo.ReleaseVersion);
@@ -50,8 +50,8 @@ namespace TNT.Updater
 		{
 			if (releaseResponse == null)
 			{
-				var jwt = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
-				var response = await client.GetReleaseAsync(appInfo.ReleaseID, jwt);
+				var jwtResponse = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
+				var response = await client.GetReleaseAsync(appInfo.ReleaseID, jwtResponse.Token);
 				if (response == null || !response.IsSuccess)
 				{
 					MessageBox.Show(response.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
