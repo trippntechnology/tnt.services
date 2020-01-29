@@ -76,7 +76,7 @@ namespace TNT.Services.Client
 
 		public JWTResponse GetJWT(int appId, string password)
 		{
-			var appCredential = new ApplicationCredential() { ApplicationId = appId, Password = password };
+			var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
 			var request = new RestRequest(Method.POST).AddJsonBody(appCredential);
 			var response = tokenClient.Execute(request);
 			JWTResponse jwtResponse;

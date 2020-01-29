@@ -221,7 +221,7 @@ namespace TNT.Services.Service.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Secret")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");

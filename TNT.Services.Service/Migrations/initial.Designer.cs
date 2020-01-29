@@ -9,8 +9,8 @@ using TNT.Services.Service.Data;
 namespace TNT.Services.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200111044353_initial200110")]
-    partial class Initial
+    [Migration("20200124141326_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -223,7 +223,7 @@ namespace TNT.Services.Service.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Secret")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
