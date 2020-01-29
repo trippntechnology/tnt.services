@@ -38,8 +38,11 @@ namespace TNT.Updater
 			try
 			{
 				var client = new Client(settings.ApiEndpointUri, settings.TokenEndpointUri);
-				var jwt = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
-				appInfo = client.GetApplicationInfo(arguments.ApplicationId, jwt);
+				var jwtResponse = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
+
+				if (!jwtResponse.IsSuccess) throw new Exception(jwtResponse.Message);
+
+				appInfo = client.GetApplicationInfo(arguments.ApplicationId, jwtResponse.Token);
 				if (!appInfo.IsSuccess) throw new Exception(appInfo.Message);
 			}
 			catch (Exception ex)

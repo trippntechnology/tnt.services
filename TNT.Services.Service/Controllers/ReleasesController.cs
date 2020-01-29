@@ -91,7 +91,7 @@ namespace TNT.Update.Service.Controllers
 				}
 
 				release.Version = GetVersion(release.Package);
-				release.Date = DateTime.Now;
+				release.Date = DateTime.Now.ToUniversalTime();
 				release.FileName = upload.FileName;
 
 				_context.Add(release);

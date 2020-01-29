@@ -74,13 +74,22 @@ namespace TNT.Services.Client
 			return Task.Run(() => { return GetRelease(releaseId, jwt); });
 		}
 
-		public JWT GetJWT(int appId, string password)
+		public JWTResponse GetJWT(int appId, string password)
 		{
-			var appCredential = new ApplicationCredential() { ApplicationId = appId, Password = password };
+			var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
 			var request = new RestRequest(Method.POST).AddJsonBody(appCredential);
 			var response = tokenClient.Execute(request);
-			var jwt = JsonConvert.DeserializeObject<string>(response.Content);
-			return new JWT(jwt);
+			JWTResponse jwtResponse;
+			var content = JsonConvert.DeserializeObject<string>(response.Content);
+			if (response.IsSuccessful)
+			{
+				jwtResponse = new JWTResponse(content);
+			}
+			else
+			{
+				jwtResponse = new JWTResponse(new Exception(content));
+			}
+			return jwtResponse;
 		}
 	}
 }
