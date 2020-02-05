@@ -30,14 +30,17 @@ namespace TNT.Updater
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(arguments.Usage(ex), "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				if (!arguments.WriteToConsole)
+				{
+					MessageBox.Show(arguments.Usage(ex), "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
 				return;
 			}
 
 			ApplicationInfo appInfo = null;
 			try
 			{
-				var client = new Client(settings.ApiEndpointUri, settings.TokenEndpointUri);
+				var client = new Client(arguments.ApiEndoint, arguments.AuthEnpoint);
 				var jwtResponse = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
 
 				if (!jwtResponse.IsSuccess) throw new Exception(jwtResponse.Message);
@@ -63,7 +66,7 @@ namespace TNT.Updater
 				return;
 			}
 
-			Application.Run(new Form1(arguments, appInfo, settings));
+			Application.Run(new Form1(arguments, appInfo));
 		}
 	}
 }

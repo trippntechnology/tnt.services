@@ -16,12 +16,12 @@ namespace TNT.Updater
 
 		private ReleaseResponse releaseResponse = null;
 
-		public Form1(Arguments arguments, ApplicationInfo appInfo, Settings settings)
+		public Form1(Arguments arguments, ApplicationInfo appInfo)
 		{
 			InitializeComponent();
 			this.arguments = arguments;
 			this.appInfo = appInfo;
-			this.client = new Client(settings.ApiEndpointUri, settings.TokenEndpointUri);
+			this.client = new Client(arguments.ApiEndoint, arguments.AuthEnpoint);
 
 			Log("Calling InitializeAsync");
 			InitializeAsync();
