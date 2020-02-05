@@ -12,6 +12,7 @@ namespace TNT.Services.Client
 	{
 		private const string APPLICATION_INFO_ENDPOINT = "/GetApplicationInfo/";
 		private const string RELEASE_ENDPOINT = "/GetRelease/";
+		private const string AUTHORIZE = "/Authorize/";
 
 		protected IRestClient apiClient;
 		protected IRestClient tokenClient;
@@ -77,7 +78,7 @@ namespace TNT.Services.Client
 		public JWTResponse GetJWT(int appId, string password)
 		{
 			var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
-			var request = new RestRequest(Method.POST).AddJsonBody(appCredential);
+			var request = new RestRequest(AUTHORIZE, Method.POST).AddJsonBody(appCredential);
 			var response = tokenClient.Execute(request);
 			JWTResponse jwtResponse;
 			var content = JsonConvert.DeserializeObject<string>(response.Content);
