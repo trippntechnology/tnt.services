@@ -54,14 +54,15 @@ namespace TNT.Updater
 				{
 					var caption = string.Format(Resources.Caption, arguments.ProductName);
 					MessageBox.Show(ex.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-					return;
 				}
+				return;
 			}
 
+			//Console.WriteLine(appInfo.ToString());
 			var installedVersion = arguments.FileVersion;
 			var currentVersion = Version.Parse(appInfo.ReleaseVersion);
 
-			if (arguments.IsSilentMode && installedVersion == currentVersion)
+			if (arguments.IsSilentMode && installedVersion.CompareTo(currentVersion) >= 0)
 			{
 				return;
 			}
