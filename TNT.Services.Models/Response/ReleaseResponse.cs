@@ -2,14 +2,14 @@
 
 namespace TNT.Services.Models.Response
 {
-	public class ReleaseResponse : Response
-	{
-		public DateTime ReleaseDate { get; set; }
-		public string Package { get; set; }
-		public string FileName { get; set; }
+  public class ReleaseResponse : Response
+  {
+    public DateTime? ReleaseDate { get; set; } = null;
+    public string Package { get; set; } = string.Empty;
+    public string FileName { get; set; } = string.Empty;
 
-		public ReleaseResponse() : base() { }
+    public ReleaseResponse() : base() { }
 
-		public ReleaseResponse(Exception ex) : base(ex) { }
-	}
+    public ReleaseResponse(Exception ex) : base(ex) { }
+  }
 }

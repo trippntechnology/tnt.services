@@ -1,99 +1,80 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using TNT.Services.Models;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
 
 namespace TNT.Services.Client
 {
-	public class Client
-	{
-		private const string APPLICATION_INFO_ENDPOINT = "/GetApplicationInfo/";
-		private const string RELEASE_ENDPOINT = "/GetRelease/";
-		private const string AUTHORIZE = "/Authorize/";
+  public class Client
+  {
+    private const string APPLICATION_INFO_ENDPOINT = "/GetApplicationInfo/";
+    private const string RELEASE_ENDPOINT = "/GetRelease/";
+    private const string AUTHORIZE = "/Authorize/";
 
-		protected IRestClient apiClient;
-		protected IRestClient tokenClient;
+    protected IRestClient? apiClient = null;
+    protected IRestClient? tokenClient = null;
 
-		public Client(Uri apiUri, Uri tokenUri)
-		{
-			// Added to solve issue on Windows 7
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-			apiClient = new RestClient(apiUri);
-			tokenClient = new RestClient(tokenUri);
-		}
+    public Client(Uri apiUri, Uri tokenUri)
+    {
+      // Added to solve issue on Windows 7
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+      apiClient = new RestClient(apiUri);
+      tokenClient = new RestClient(tokenUri);
+    }
 
-		public ApplicationInfo GetApplicationInfo(int appId, JWT jwt)
-		{
-			var appRequest = new ApplicationRequest() { ApplicationID = appId };
-			var request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.POST, DataFormat.Json)
-				.AddHeader("Authorization", jwt.ToAuthToken)
-				.AddJsonBody(appRequest);
-			var response = apiClient.Execute(request);
+    private TOut ProcessRestResponse<TOut>(RestResponse? response, Func<TOut> onError)
+    {
+      if (response == null) return onError();
+      if (response.Content == null) return onError();
 
-			ApplicationInfo appInfo;
-			if (response.IsSuccessful)
-			{
-				appInfo = JsonConvert.DeserializeObject<ApplicationInfo>(response.Content);
-			}
-			else
-			{
-				appInfo = new ApplicationInfo(response.ErrorException);
-			}
+      if (response.IsSuccessful)
+      {
+        return JsonConvert.DeserializeObject<TOut>(response.Content) ?? onError();
+      }
+      else
+      {
+        return onError();
+      }
+    }
 
-			return appInfo;
-		}
+    public ApplicationInfo GetApplicationInfo(int appId, JWT jwt)
+    {
+      ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
+      RestRequest request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.Post)
+        .AddHeader("Authorization", jwt.ToAuthToken)
+        .AddJsonBody(appRequest);
+      var response = apiClient?.ExecuteAsync(request).Result;
+      return ProcessRestResponse<ApplicationInfo>(response, () => new ApplicationInfo(new HttpRequestException()));
+    }
 
-		public Task<ApplicationInfo> GetApplicationInfoAsync(int appid, JWT jwt)
-		{
-			return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
-		}
+    public Task<ApplicationInfo> GetApplicationInfoAsync(int appid, JWT jwt)
+    {
+      return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
+    }
 
-		public ReleaseResponse GetRelease(int releaseId, JWT jwt)
-		{
-			var releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
-			var request = new RestRequest(RELEASE_ENDPOINT, Method.POST, DataFormat.Json)
-				.AddHeader("Authorization", jwt.ToAuthToken)
-				.AddJsonBody(releaseRequest);
-			var response = apiClient.Execute(request);
+    public ReleaseResponse GetRelease(int releaseId, JWT jwt)
+    {
+      var releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
+      var request = new RestRequest(RELEASE_ENDPOINT, Method.Post)
+        .AddHeader("Authorization", jwt.ToAuthToken)
+        .AddJsonBody(releaseRequest);
+      var response = apiClient?.ExecuteAsync(request).Result;
+      return ProcessRestResponse<ReleaseResponse>(response, () => new ReleaseResponse(new HttpRequestException()));
+    }
 
-			ReleaseResponse releaseResponse;
-			if (response.IsSuccessful)
-			{
-				releaseResponse = JsonConvert.DeserializeObject<ReleaseResponse>(response.Content);
-			}
-			else
-			{
-				releaseResponse = new ReleaseResponse(response.ErrorException);
-			}
+    public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
+    {
+      return Task.Run(() => { return GetRelease(releaseId, jwt); });
+    }
 
-			return releaseResponse;
-		}
-
-		public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
-		{
-			return Task.Run(() => { return GetRelease(releaseId, jwt); });
-		}
-
-		public JWTResponse GetJWT(int appId, string password)
-		{
-			var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
-			var request = new RestRequest(AUTHORIZE, Method.POST).AddJsonBody(appCredential);
-			var response = tokenClient.Execute(request);
-			JWTResponse jwtResponse;
-			var content = JsonConvert.DeserializeObject<string>(response.Content);
-			if (response.IsSuccessful)
-			{
-				jwtResponse = new JWTResponse(content);
-			}
-			else
-			{
-				jwtResponse = new JWTResponse(new Exception(content));
-			}
-			return jwtResponse;
-		}
-	}
+    public JWTResponse GetJWT(int appId, string password)
+    {
+      var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
+      RestRequest request = new RestRequest(AUTHORIZE, Method.Post).AddJsonBody(appCredential);
+      var response = tokenClient?.ExecuteAsync(request).Result;
+      return ProcessRestResponse<JWTResponse>(response, () => new JWTResponse(new HttpRequestException()));
+    }
+  }
 }

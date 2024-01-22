@@ -20,6 +20,10 @@ namespace Tests
 		public void AuthorizationController_Authorize_Invalid_Credential()
 		{
 			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+			mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>()
+			{
+				new Application() { ID = 1, Secret = "secret"}
+			}));
 			var mockConfig = new Mock<IConfiguration>();
 			var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
@@ -27,7 +31,7 @@ namespace Tests
 			Assert.AreEqual(400, (result as BadRequestResult).StatusCode);
 
 			result = sut.Authorize(new ApplicationCredential());
-			Assert.AreEqual(400, (result as BadRequestResult).StatusCode);
+			Assert.AreEqual(400, (result as BadRequestObjectResult).StatusCode);
 		}
 
 		[TestMethod]
