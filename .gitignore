@@ -7,3 +7,4 @@ packages
 _*/
 **/*.coverage
 Documentation/help
+/TNT.Updater.old/
