@@ -15,19 +15,23 @@ namespace TNT.Services.Service
 		{
 			var host = CreateWebHostBuilder(args).Build();
 
-			using (var scope = host.Services.CreateScope())
+      using (var scope = host.Services.CreateScope())
 			{
-				var services = scope.ServiceProvider;
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
 
-				try
-				{
-					var context = services.GetRequiredService<ApplicationDbContext>();
-					context.Database.Migrate();
-					SeedData.Initialize(services);
+        logger.LogInformation("Entering main");
+
+        try
+        {
+          var context = services.GetRequiredService<ApplicationDbContext>();
+          logger.LogInformation("Migrating database");
+          context.Database.Migrate();
+          logger.LogInformation("Seeding database");
+          SeedData.Initialize(services);
 				}
 				catch (Exception ex)
 				{
-					var logger = services.GetRequiredService<ILogger<Program>>();
 					logger.LogError(ex, "An error occurred seeding the DB.");
 				}
 			}

@@ -26,7 +26,17 @@ namespace TNT.Services.Service
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.Configure<CookiePolicyOptions>(options =>
+			services.AddLogging();
+
+      // Configure logging
+      var serviceProvider = services.BuildServiceProvider();
+      var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+      var logger = loggerFactory.CreateLogger<Startup>();
+
+      // Log a message in ConfigureServices
+      logger.LogInformation("Logging from ConfigureServices");
+
+      services.Configure<CookiePolicyOptions>(options =>
 			{
 				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
 				options.CheckConsentNeeded = context => true;
@@ -61,8 +71,10 @@ namespace TNT.Services.Service
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+		{	
+			logger.LogInformation("Logging from configure");
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
