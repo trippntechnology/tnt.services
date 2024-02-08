@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using TNT.Services.Models.Exceptions;
 using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
@@ -16,187 +11,185 @@ using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Update.Service.Controllers
 {
-	[Authorize]
-	public class ReleasesController : BaseController
-	{
-		private readonly ApplicationDbContext _context;
+  [Authorize]
+  public class ReleasesController : BaseController
+  {
+    private readonly ApplicationDbContext _context;
 
-		public ReleasesController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+    public ReleasesController(ApplicationDbContext context)
+    {
+      _context = context;
+    }
 
-		// GET: Releases
-		public IActionResult Index()
-		{
-			var applications = _context.Application.ToList();
-			var releases = _context.Release.ToList();
+    // GET: Releases
+    public IActionResult Index()
+    {
+      var applications = _context.Application.ToList();
+      var releases = _context.Release.ToList();
 
-			var releasePluses = (from a in applications
-													 join r in releases on a.ID equals r.ApplicationID
-													 select new ReleasePlus()
-													 {
-														 ApplicationID = a.ID,
-														 ID = r.ID,
-														 ApplicationName = a.Name,
-														 Version = (r == null ? "" : r.Version),
-														 Date = (r == null ? DateTime.Now : r.Date),
-														 FileName = (r == null ? "" : r.FileName)
-													 });
+      var releasePluses = (from a in applications
+                           join r in releases on a.ID equals r.ApplicationID
+                           select new ReleasePlus()
+                           {
+                             ApplicationID = a.ID,
+                             ID = r.ID,
+                             ApplicationName = a.Name,
+                             Version = (r == null ? "" : r.Version),
+                             Date = (r == null ? DateTime.Now : r.Date),
+                             FileName = (r == null ? "" : r.FileName)
+                           });
 
-			return View(releasePluses.OrderBy(r => r.Date));
-		}
+      return View(releasePluses.OrderBy(r => r.Date));
+    }
 
-		// GET: Releases/Details/5
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+    // GET: Releases/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+      if (id == null)
+      {
+        return NotFound();
+      }
 
-			var release = await _context.Release
-					.FirstOrDefaultAsync(m => m.ID == id);
-			if (release == null)
-			{
-				return NotFound();
-			}
+      var release = await _context.Release
+          .FirstOrDefaultAsync(m => m.ID == id);
+      if (release == null)
+      {
+        return NotFound();
+      }
 
-			return View(release);
-		}
+      return View(release);
+    }
 
-		// GET: Releases/Create
-		public IActionResult Create()
-		{
-			var applications = _context.Application.OrderBy(a => a.Name).ToList();
-			ViewBag.Applications = new SelectList(applications, "ID", "Name");
-			return View();
-		}
+    // GET: Releases/Create
+    public IActionResult Create()
+    {
+      var applications = _context.Application.OrderBy(a => a.Name).ToList();
+      ViewBag.Applications = new SelectList(applications, "ID", "Name");
+      return View();
+    }
 
-		// POST: Releases/Create
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("ID,ApplicationID,Package")] Release release, IFormFile upload)
-		{
-			if (ModelState.IsValid)
-			{
-				var application = _context.Application.Find(release.ApplicationID);
-				if (application == null) throw new InvalidApplicationIdException();
+    // POST: Releases/Create
+    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+    // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("ID,ApplicationID,Package")] Release release, IFormFile upload)
+    {
+      if (upload == null) return Create();
 
-				using (var reader = new BinaryReader(upload.OpenReadStream()))
-				{
-					release.Package = reader.ReadBytes((int)upload.Length);
-				}
+      var application = _context.Application.Find(release.ApplicationID);
+      if (application == null) throw new InvalidApplicationIdException();
 
-				release.Version = GetVersion(release.Package);
-				release.Date = DateTime.Now.ToUniversalTime();
-				release.FileName = upload.FileName;
+      using (var reader = new BinaryReader(upload.OpenReadStream()))
+      {
+        release.Package = reader.ReadBytes((int)upload.Length);
+      }
 
-				_context.Add(release);
-				await _context.SaveChangesAsync();
-				return RedirectToAction(nameof(Index));
-			}
-			return View(release);
-		}
+      release.Version = GetVersion(release.Package);
+      release.Date = DateTime.Now.ToUniversalTime();
+      release.FileName = upload.FileName;
 
-		// GET: Releases/Edit/5
-		public async Task<IActionResult> Edit(int? id)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+      _context.Add(release);
+      await _context.SaveChangesAsync();
+      return RedirectToAction(nameof(Index));
+    }
 
-			var release = await _context.Release.FindAsync(id);
-			if (release == null)
-			{
-				return NotFound();
-			}
-			return View(release);
-		}
+    // GET: Releases/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+      if (id == null)
+      {
+        return NotFound();
+      }
 
-		// POST: Releases/Edit/5
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("ID,ApplicationID,Package")] Release release)
-		{
-			if (id != release.ID)
-			{
-				return NotFound();
-			}
+      var release = await _context.Release.FindAsync(id);
+      if (release == null)
+      {
+        return NotFound();
+      }
+      return View(release);
+    }
 
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					_context.Update(release);
-					await _context.SaveChangesAsync();
-				}
-				catch (DbUpdateConcurrencyException)
-				{
-					if (!ReleaseExists(release.ID))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
-				}
-				return RedirectToAction(nameof(Index));
-			}
-			return View(release);
-		}
+    // POST: Releases/Edit/5
+    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+    // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, [Bind("ID,ApplicationID,Package")] Release release)
+    {
+      if (id != release.ID)
+      {
+        return NotFound();
+      }
 
-		// GET: Releases/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+      if (ModelState.IsValid)
+      {
+        try
+        {
+          _context.Update(release);
+          await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+          if (!ReleaseExists(release.ID))
+          {
+            return NotFound();
+          }
+          else
+          {
+            throw;
+          }
+        }
+        return RedirectToAction(nameof(Index));
+      }
+      return View(release);
+    }
 
-			var release = await _context.Release
-					.FirstOrDefaultAsync(m => m.ID == id);
-			if (release == null)
-			{
-				return NotFound();
-			}
-			var application = await _context.Application.FirstOrDefaultAsync(a => a.ID == release.ApplicationID);
+    // GET: Releases/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+      if (id == null)
+      {
+        return NotFound();
+      }
 
-			release.Package = null;
+      var release = await _context.Release
+          .FirstOrDefaultAsync(m => m.ID == id);
+      if (release == null)
+      {
+        return NotFound();
+      }
+      var application = await _context.Application.FirstOrDefaultAsync(a => a.ID == release.ApplicationID);
 
-			var releasePlus = new ReleasePlus()
-			{
-				ApplicationID = application.ID,
-				ApplicationName = application.Name,
-				Date = release.Date,
-				ID = release.ID,
-				FileName = release.FileName,
-				Version = release.Version
-			};
+      release.Package = null;
 
-			return View(releasePlus);
-		}
+      var releasePlus = new ReleasePlus()
+      {
+        ApplicationID = application.ID,
+        ApplicationName = application.Name,
+        Date = release.Date,
+        ID = release.ID,
+        FileName = release.FileName,
+        Version = release.Version
+      };
 
-		// POST: Releases/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
-		{
-			var release = await _context.Release.FindAsync(id);
-			_context.Release.Remove(release);
-			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
-		}
+      return View(releasePlus);
+    }
 
-		private bool ReleaseExists(int id)
-		{
-			return _context.Release.Any(e => e.ID == id);
-		}
-	}
+    // POST: Releases/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+      var release = await _context.Release.FindAsync(id);
+      _context.Release.Remove(release);
+      await _context.SaveChangesAsync();
+      return RedirectToAction(nameof(Index));
+    }
+
+    private bool ReleaseExists(int id)
+    {
+      return _context.Release.Any(e => e.ID == id);
+    }
+  }
 }
