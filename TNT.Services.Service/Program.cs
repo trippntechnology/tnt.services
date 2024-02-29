@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TNT.Services.Service.Data;
 using TNT.Services.Service.Models;
 
@@ -18,6 +20,23 @@ namespace TNT.Services.Service
       builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
           .AddEntityFrameworkStores<ApplicationDbContext>();
       builder.Services.AddControllersWithViews();
+
+      builder.Services.AddAuthentication()
+         .AddJwtBearer(options =>
+         {
+           //options.IncludeErrorDetails = true;
+           options.RequireHttpsMetadata = false;
+           options.SaveToken = true;
+           options.TokenValidationParameters = new TokenValidationParameters()
+           {
+             ValidateIssuer = true,
+             ValidateAudience = true,
+             ValidateLifetime = true,
+             ValidAudience = builder.Configuration["Jwt:Audience"],
+             ValidIssuer = builder.Configuration["Jwt:Issuer"],
+             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+           };
+         });
 
       var app = builder.Build();
       app.Logger.LogInformation("Logging from Program::Main");
@@ -49,7 +68,9 @@ namespace TNT.Services.Service
 
       app.UseRouting();
 
+      app.UseAuthentication();
       app.UseAuthorization();
+      app.MapControllers();
 
       app.MapControllerRoute(
           name: "default",

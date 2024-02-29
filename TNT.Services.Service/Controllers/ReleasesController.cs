@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TNT.Commons;
 using TNT.Services.Models.Exceptions;
 using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
@@ -163,6 +164,8 @@ namespace TNT.Update.Service.Controllers
 
       release.Package = null;
 
+      if (application == null) return NotFound();
+
       var releasePlus = new ReleasePlus()
       {
         ApplicationID = application.ID,
@@ -182,8 +185,11 @@ namespace TNT.Update.Service.Controllers
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
       var release = await _context.Release.FindAsync(id);
-      _context.Release.Remove(release);
-      await _context.SaveChangesAsync();
+      release?.also(async it =>
+      {
+        _context.Release.Remove(it);
+        await _context.SaveChangesAsync();
+      });
       return RedirectToAction(nameof(Index));
     }
 

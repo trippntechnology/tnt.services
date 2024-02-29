@@ -14,7 +14,7 @@ namespace Tests
 		{
 			var defaultVersion = new Version();
 			string? version = null;
-			Assert.AreEqual(defaultVersion, version.ToVersion());
+			Assert.IsNull( version?.ToVersion());
 			Assert.AreEqual(defaultVersion, "".ToVersion());
 			Assert.AreEqual(defaultVersion, "1".ToVersion());
 			Assert.AreEqual(defaultVersion, "1.1.1.1.1".ToVersion());

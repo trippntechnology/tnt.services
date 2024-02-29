@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
+using TNT.Commons;
 using TNT.Services.Client;
 using TNT.Services.Models.Response;
 using TNT.Updater.Properties;
-using TNT.Utilities;
 
 namespace TNT.Updater
 {
@@ -34,7 +34,7 @@ namespace TNT.Updater
       labelReleaseDate.Text = appInfo.ReleaseDate?.ToLocalTime().ToString();
 
       var installedVersion = this.arguments.FileVersion;
-      var currentVersion = appInfo.ReleaseVersion?.Let(it => Version.Parse(it));
+      var currentVersion = appInfo.ReleaseVersion?.let(it => Version.Parse(it));
 
       buttonInstall.Enabled = currentVersion > installedVersion;
 
@@ -44,7 +44,7 @@ namespace TNT.Updater
       }
     }
 
-    private async void buttonInstall_Click(object sender, EventArgs e)
+    private void buttonInstall_Click(object sender, EventArgs e)
     {
       if (releaseResponse == null)
       {
@@ -65,7 +65,7 @@ namespace TNT.Updater
       {
         MessageBox.Show(string.Format(Resources.CloseApplicationMessage, arguments.ProcessName), Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
-      else 
+      else
       {
         var path = Path.Combine(Path.GetTempPath(), releaseResponse.FileName);
         var package = Convert.FromBase64String(releaseResponse.Package);

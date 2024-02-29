@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TNT.Commons;
 using TNT.Services.Service.Data;
 using TNT.Services.Service.Models.Entities;
 
@@ -136,9 +137,12 @@ namespace TNT.Update.Service.Controllers
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-      var application = await _context.Application.FindAsync(id);
-      _context.Application.Remove(application);
-      await _context.SaveChangesAsync();
+      Application? application = await _context.Application.FindAsync(id);
+      application?.also(async it =>
+       {
+         _context.Application.Remove(it);
+         await _context.SaveChangesAsync();
+       });
       return RedirectToAction(nameof(Index));
     }
 
