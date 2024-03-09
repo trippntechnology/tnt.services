@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using System.Net;
+using TNT.Commons;
 using TNT.Services.Models;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
@@ -13,31 +14,30 @@ namespace TNT.Services.Client
     private const string RELEASE_ENDPOINT = "/GetRelease/";
     private const string AUTHORIZE = "/Authorize/";
 
-    protected IRestClient? apiClient = null;
-    protected IRestClient? tokenClient = null;
+    protected IRestClient apiClient;
+    protected IRestClient tokenClient;
 
     public Client(Uri apiUri, Uri tokenUri)
     {
       // Added to solve issue on Windows 7
-      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
       apiClient = new RestClient(apiUri);
       tokenClient = new RestClient(tokenUri);
     }
 
-    private TOut ProcessRestResponse<TOut>(RestResponse? response, Func<TOut> onError)
+    private TOut ProcessRestResponse<TOut>(RestResponse? response)
     {
-      if (response == null) return onError();
-      if (response.Content == null) return onError();
+      if (response == null) throw new Exception("Response was null");
+      if (response.Content == null) throw new Exception("Content was null");
 
-      if (response.IsSuccessful)
+      if (!response.IsSuccessful)
       {
-        return JsonConvert.DeserializeObject<TOut>(response.Content) ?? onError();
+        response.ErrorException?.also(it => throw it);
       }
-      else
-      {
-        return onError();
-      }
+
+      return JsonConvert.DeserializeObject<TOut>(response.Content) ?? throw new Exception("Deserialization resulted in a null value");
     }
+
 
     public ApplicationInfo GetApplicationInfo(int appId, JWT jwt)
     {
@@ -45,8 +45,16 @@ namespace TNT.Services.Client
       RestRequest request = new RestRequest(APPLICATION_INFO_ENDPOINT, Method.Post)
         .AddHeader("Authorization", jwt.ToAuthToken)
         .AddJsonBody(appRequest);
-      var response = apiClient?.ExecuteAsync(request).Result;
-      return ProcessRestResponse<ApplicationInfo>(response, () => new ApplicationInfo(new HttpRequestException()));
+      RestResponse response = apiClient.ExecuteAsync(request).Result;
+
+      try
+      {
+        return ProcessRestResponse<ApplicationInfo>(response);
+      }
+      catch (Exception ex)
+      {
+        return new ApplicationInfo(ex);
+      }
     }
 
     public Task<ApplicationInfo> GetApplicationInfoAsync(int appid, JWT jwt)
@@ -56,12 +64,20 @@ namespace TNT.Services.Client
 
     public ReleaseResponse GetRelease(int releaseId, JWT jwt)
     {
-      var releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
-      var request = new RestRequest(RELEASE_ENDPOINT, Method.Post)
+      ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
+      RestRequest request = new RestRequest(RELEASE_ENDPOINT, Method.Post)
         .AddHeader("Authorization", jwt.ToAuthToken)
         .AddJsonBody(releaseRequest);
       var response = apiClient?.ExecuteAsync(request).Result;
-      return ProcessRestResponse<ReleaseResponse>(response, () => new ReleaseResponse(new HttpRequestException()));
+
+      try
+      {
+        return ProcessRestResponse<ReleaseResponse>(response);
+      }
+      catch (Exception ex)
+      {
+        return new ReleaseResponse(ex);
+      }
     }
 
     public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
@@ -71,10 +87,19 @@ namespace TNT.Services.Client
 
     public JWTResponse GetJWT(int appId, string password)
     {
-      var appCredential = new ApplicationCredential() { ID = appId, Secret = password };
+      ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
       RestRequest request = new RestRequest(AUTHORIZE, Method.Post).AddJsonBody(appCredential);
-      var response = tokenClient?.ExecuteAsync(request).Result;
-      return ProcessRestResponse<JWTResponse>(response, () => new JWTResponse(new HttpRequestException()));
+      var response = tokenClient.ExecuteAsync(request).Result;
+
+      try
+      {
+        var token = ProcessRestResponse<String>(response) ?? throw new Exception("Token is null");
+        return new JWTResponse(token);
+      }
+      catch (Exception ex)
+      {
+        return new JWTResponse(ex);
+      }
     }
   }
 }

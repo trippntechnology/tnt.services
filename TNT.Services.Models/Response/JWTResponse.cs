@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace TNT.Services.Models.Response;
 
-namespace TNT.Services.Models.Response
+public class JWTResponse : Response
 {
-  public class JWTResponse : Response
-  {
-    public JWT? Token { get; private set; } = null;
+  public JWT? Token { get; private set; } = null;
 
-    public JWTResponse(string token) : base() { this.Token = new JWT(token); }
+  public JWTResponse(string token) : base() { this.Token = new JWT(token); }
 
-    public JWTResponse(Exception ex) : base(ex) { }
-  }
+  public JWTResponse(Exception ex) : base(ex) { }
 }
