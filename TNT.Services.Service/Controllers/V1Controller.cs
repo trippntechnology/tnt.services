@@ -5,7 +5,6 @@ using TNT.Services.Models.Exceptions;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
 using TNT.Services.Service.Data;
-using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Services.Service.Controllers
 {
@@ -88,7 +87,7 @@ namespace TNT.Services.Service.Controllers
 
       try
       {
-        Licensee licensee = _context.Licensee.Where(l => l.ID == licenseeRequest.LicenseeId && l.ApplicationId == licenseeRequest.ApplicationId).FirstOrDefault() ??
+        var licensee = _context.Licensee.Where(l => l.ID == licenseeRequest.LicenseeId && l.ApplicationId == licenseeRequest.ApplicationId).FirstOrDefault() ??
           throw new LicenseeNotFoundException();
         response = new LicenseeResponse()
         {
