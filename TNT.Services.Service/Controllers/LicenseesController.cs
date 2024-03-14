@@ -22,7 +22,9 @@ namespace TNT.Services.Service.Controllers
     {
       return (from l in licensees
               join a in applications on l.ApplicationId equals a.ID
-              select new LicenseePlus(l, a.Name)).ToList();
+              select new LicenseePlus(l, a.Name))
+              .OrderBy(l => l.ValidUntil)
+              .ToList();
     }
 
     // GET: Licensees
