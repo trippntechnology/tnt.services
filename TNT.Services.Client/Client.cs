@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
-using System.Net;
 using TNT.Commons;
 using TNT.Services.Models;
 using TNT.Services.Models.Request;
@@ -19,8 +18,6 @@ namespace TNT.Services.Client
 
     public Client(Uri apiUri, Uri tokenUri)
     {
-      // Added to solve issue on Windows 7
-      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
       apiClient = new RestClient(apiUri);
       tokenClient = new RestClient(tokenUri);
     }
