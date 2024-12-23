@@ -36,7 +36,7 @@ namespace TNT.Services.Service.Controllers
     }
 
     // GET: Licensees/Details/5
-    public async Task<IActionResult> Details(string? id)
+    public async Task<IActionResult> Details(Guid? id)
     {
       if (id == null)
       {
@@ -107,7 +107,7 @@ namespace TNT.Services.Service.Controllers
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, [Bind("ID,Name,ApplicationId,ValidUntil,ApplicationName")] Licensee licensee)
+    public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,ApplicationId,ValidUntil,ApplicationName")] Licensee licensee)
     {
       if (id != licensee.ID)
       {
@@ -138,7 +138,7 @@ namespace TNT.Services.Service.Controllers
     }
 
     // GET: Licensees/Delete/5
-    public async Task<IActionResult> Delete(string? id)
+    public async Task<IActionResult> Delete(Guid? id)
     {
       if (id == null)
       {
@@ -170,7 +170,7 @@ namespace TNT.Services.Service.Controllers
       return RedirectToAction(nameof(Index));
     }
 
-    private bool LicenseeExists(string id)
+    private bool LicenseeExists(Guid id)
     {
       return _context.Licensee.Any(e => e.ID == id);
     }

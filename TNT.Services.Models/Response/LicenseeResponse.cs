@@ -2,7 +2,7 @@
 
 public class LicenseeResponse : Response
 {
-  public string ID { get; set; } = string.Empty;
+  public Guid ID { get; set; } = Guid.Empty;
   public string Name { get; set; } = string.Empty;
   public int ApplicationId { get; set; }
   public DateTimeOffset ValidUntil { get; set; }

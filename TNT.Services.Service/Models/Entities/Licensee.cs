@@ -2,7 +2,7 @@
 
 public class Licensee
 {
-  public string ID { get; set; } = Guid.NewGuid().ToString();
+  public Guid ID { get; set; } = Guid.NewGuid();
   public string Name { get; set; } = string.Empty;
   public int ApplicationId { get; set; }
   public DateTimeOffset ValidUntil { get; set; }

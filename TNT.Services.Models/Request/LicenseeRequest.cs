@@ -2,6 +2,6 @@
 
 public class LicenseeRequest
 {
-  public string LicenseeId { get; set; } = string.Empty;
+  public Guid LicenseeId { get; set; }
   public int ApplicationId { get; set; }
 }
