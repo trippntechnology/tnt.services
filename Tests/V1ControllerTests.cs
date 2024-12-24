@@ -33,7 +33,7 @@ namespace Tests
 
 			var sut = new V1Controller(mockContext.Object);
 
-			var result = sut.GetApplicationInfo(new ApplicationRequest { ApplicationID = 5 });
+			var result = sut.GetApplicationInfo(5);
 
 			Assert.IsFalse(result.IsSuccess);
 			Assert.AreEqual("ApplicationNotFoundException: Application ID, 5 does not exist", result.Message);
@@ -47,7 +47,7 @@ namespace Tests
 			mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
 
 			var sut = new V1Controller(mockContext.Object);
-			var result = sut.GetApplicationInfo(new ApplicationRequest { ApplicationID = 1 });
+			var result = sut.GetApplicationInfo(1);
 
 			Assert.IsFalse(result.IsSuccess);
 			Assert.AreEqual("ReleaseNotFoundException: Release associated with application ID, 1, could not be found", result.Message);
@@ -62,7 +62,7 @@ namespace Tests
 
 			var sut = new V1Controller(mockContext.Object);
 
-			var result = sut.GetApplicationInfo(new ApplicationRequest { ApplicationID = 1 });
+			var result = sut.GetApplicationInfo(1);
 
 			Assert.AreEqual(Applications[0].Name, result.Name);
 			Assert.AreEqual(Releases[0].Version, result.ReleaseVersion);
@@ -80,7 +80,7 @@ namespace Tests
 			mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
 
 			var sut = new V1Controller(mockContext.Object);
-			var result = sut.GetRelease(new ReleaseRequest { ReleaseId = 1 });
+			var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
 
 			Assert.IsFalse(result.IsSuccess);
 			Assert.AreEqual("ReleaseNotFoundException: Release ID, 1, could not be found", result.Message);
@@ -94,7 +94,7 @@ namespace Tests
 			mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
 
 			var sut = new V1Controller(mockContext.Object);
-			var result = sut.GetRelease(new ReleaseRequest { ReleaseId = 1 });
+			var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
 
 			Assert.IsTrue(result.IsSuccess);
 			Assert.AreEqual(Releases[0].Date, result.ReleaseDate);

@@ -27,10 +27,10 @@ namespace Tests
       var mockConfig = new Mock<IConfiguration>();
       var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-      var result = sut.Authorize(null);
+      var result = sut.PostAuthorize(null);
       Assert.AreEqual(400, (result as BadRequestResult).StatusCode);
 
-      result = sut.Authorize(new ApplicationCredential());
+      result = sut.PostAuthorize(new ApplicationCredential());
       Assert.AreEqual(400, (result as BadRequestObjectResult).StatusCode);
     }
 
@@ -46,11 +46,11 @@ namespace Tests
       var mockConfig = new Mock<IConfiguration>();
       var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-      var result = sut.Authorize(new ApplicationCredential() { Secret = "secret" }) as BadRequestObjectResult;
+      var result = sut.PostAuthorize(new ApplicationCredential() { Secret = "secret" }) as BadRequestObjectResult;
       Assert.AreEqual(400, result.StatusCode);
       Assert.AreEqual("Invalid credentials", result.Value);
 
-      result = sut.Authorize(new ApplicationCredential() { ID = 1, Secret = "foo" }) as BadRequestObjectResult;
+      result = sut.PostAuthorize(new ApplicationCredential() { ID = 1, Secret = "foo" }) as BadRequestObjectResult;
       Assert.AreEqual(400, result.StatusCode);
       Assert.AreEqual("Invalid credentials", result.Value);
     }
@@ -80,7 +80,7 @@ namespace Tests
 
       var sut = new AuthorizationController(mockConfig.Object, mockContext.Object, mockDateTime.Object, mockGuidUtil.Object);
 
-      var result = sut.Authorize(new ApplicationCredential { ID = 1, Secret = "secret" }) as OkObjectResult;
+      var result = sut.PostAuthorize(new ApplicationCredential { ID = 1, Secret = "secret" }) as OkObjectResult;
       Assert.AreEqual(200, result.StatusCode);
       Console.WriteLine($"SMT: {result.Value}");
       var values = result.Value.ToString().Split('.');

@@ -26,15 +26,19 @@ namespace TNT.Services.Service.Controllers
       return new Response() { Message = "Congratulations! You have successfully connected." };
     }
 
+    [Obsolete("Use GetApplicationInfo")]
     [HttpPost]
-    public ApplicationInfo GetApplicationInfo(ApplicationRequest applicationRequest)
+    public ApplicationInfo PostApplicationInfo(ApplicationRequest applicationRequest) => GetApplicationInfo(applicationRequest.ApplicationID);
+
+    [HttpGet]
+    public ApplicationInfo GetApplicationInfo([FromQuery] int applicationId)
     {
       ApplicationInfo? response = null;
 
       try
       {
-        var application = _context.Application.Where(a => a.ID == applicationRequest.ApplicationID).FirstOrDefault();
-        if (application == null) throw new ApplicationNotFoundException(applicationRequest.ApplicationID);
+        var application = _context.Application.Where(a => a.ID == applicationId).FirstOrDefault();
+        if (application == null) throw new ApplicationNotFoundException(applicationId);
 
         var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
         if (release == null) throw new ReleaseNotFoundException(application.ID);
@@ -55,8 +59,14 @@ namespace TNT.Services.Service.Controllers
       return response;
     }
 
+    [HttpGet]
+    public ReleaseResponse GetRelease([FromQuery] int releaseId)
+    {
+      return PostRelease(new ReleaseRequest() { ReleaseId = releaseId });
+    }
+
     [HttpPost]
-    public ReleaseResponse GetRelease(ReleaseRequest releaseRequest)
+    public ReleaseResponse PostRelease(ReleaseRequest releaseRequest)
     {
       ReleaseResponse response;
 
@@ -81,7 +91,7 @@ namespace TNT.Services.Service.Controllers
     }
 
     [HttpPost]
-    public LicenseeResponse CheckLicense(LicenseeRequest licenseeRequest)
+    public LicenseeResponse PostVerifyLicense(LicenseeRequest licenseeRequest)
     {
       LicenseeResponse response;
 

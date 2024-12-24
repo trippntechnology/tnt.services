@@ -1,4 +1,6 @@
-﻿namespace TNT.Services.Models.Response
+﻿using System.Text;
+
+namespace TNT.Services.Models.Response
 {
   public class ApplicationInfo : Response
   {
@@ -10,5 +12,15 @@
     public ApplicationInfo() : base() { }
 
     public ApplicationInfo(Exception ex) : base(ex) { }
+
+    public override string ToString()
+    {
+      var sb = new StringBuilder();
+      sb.AppendLine($"Name: {Name}");
+      sb.AppendLine($"ReleaseVersion: {ReleaseVersion}");
+      sb.AppendLine($"ReleaseDate: {ReleaseDate}");
+      sb.AppendLine($"ReleaseID: {ReleaseID}");
+      return sb.ToString();
+    }
   }
 }

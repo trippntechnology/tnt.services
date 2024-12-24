@@ -81,7 +81,7 @@ namespace TNT.Services.Service.Controllers
     }
 
     // GET: Licensees/Edit/5
-    public async Task<IActionResult> Edit(string? id)
+    public async Task<IActionResult> Edit(Guid? id)
     {
       if (id == null)
       {
