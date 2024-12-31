@@ -5,7 +5,7 @@ internal class Program
 {
   private static void Main(string[] args)
   {
-    var client = new Client(new Uri("https://localhost:5001/"), new Uri("https://localhost:5001/"));
+    var client = new Client(new Uri("https://localhost:5001/api"));
 
     Console.Write($"Calling GetJWT(1, Secret1) ... ");
     var jwt = client.GetJWT(1, "Secret1");
@@ -23,9 +23,10 @@ internal class Program
       Console.WriteLine(release?.IsSuccess);
 
       LicenseeRequest request = new LicenseeRequest() { ApplicationId = 1, LicenseeId = Guid.Parse("fe94e00e-16cb-41e7-9c11-69f7f719819e") };
-      Console.Write($"Calling VerifyLicense({request.ApplicationId}, {request.LicenseeId} ) ... ");
-      var licenseeResponse = client.VerifyLicense(request, jwt.Token);
-      Console.WriteLine(licenseeResponse?.IsSuccess);
+      Console.WriteLine($"Calling GetLicensee({request.ApplicationId}, {request.LicenseeId} )");
+      Console.WriteLine("LicenseeResponse:");
+      var licenseeResponse = client.GetLicensee(request, jwt.Token);
+      Console.WriteLine(licenseeResponse.ToString());
     }
   }
 }

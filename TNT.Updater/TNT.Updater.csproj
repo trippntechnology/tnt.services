@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TNT.Services.Client\TNT.Services.Client.csproj" />
-    <ProjectReference Include="..\TNT.Services.Models\TNT.Services.Models.csproj" />
   </ItemGroup>
 
 </Project>

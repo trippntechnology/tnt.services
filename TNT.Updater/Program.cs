@@ -2,8 +2,8 @@
 using TNT.Services.Models.Response;
 using TNT.Updater.Properties;
 
-namespace TNT.Updater
-{
+namespace TNT.Updater;
+
   static class Program
   {
     /// <summary>
@@ -34,7 +34,7 @@ namespace TNT.Updater
       ApplicationInfo? appInfo = null;
       try
       {
-        Client client = new Client(arguments.ApiEndoint, arguments.AuthEndpoint);
+      Client client = new Client(arguments.BaseUri);
         JWTResponse jwtResponse = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
 
         if (!jwtResponse.IsSuccess) throw new Exception(jwtResponse.Message);
@@ -64,4 +64,3 @@ namespace TNT.Updater
       Application.Run(new Form1(arguments, appInfo));
     }
   }
-}

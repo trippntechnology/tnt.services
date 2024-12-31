@@ -7,9 +7,6 @@ namespace TNT.Updater
 {
   public class Arguments : ArgumentParser.ArgumentParser
   {
-    private const string API_CONTROLLER = "v1";
-    private const string AUTH_CONTROLLER = "Authorization";
-
     private const string APPLICATION = "a";
     private const string APP_ID = "i";
     private const string APP_PASSWORD = "p";
@@ -30,8 +27,6 @@ namespace TNT.Updater
     public string ApplicationPassword => applicationPasswordArgument.Value!;
     public bool IsSilentMode => isSilentModeArgument.Value;
     public Uri BaseUri => baseUriArgument.Value!;
-    public Uri ApiEndoint => new Uri($"{BaseUri}/{API_CONTROLLER}");
-    public Uri AuthEndpoint => new Uri($"{BaseUri}/{AUTH_CONTROLLER}");
 
     public string CompanyName { get; private set; } = string.Empty;
     public string ProductName { get; private set; } = string.Empty;

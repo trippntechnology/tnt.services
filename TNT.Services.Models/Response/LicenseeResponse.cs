@@ -1,4 +1,6 @@
-﻿namespace TNT.Services.Models.Response;
+﻿using System.Text;
+
+namespace TNT.Services.Models.Response;
 
 public class LicenseeResponse : Response
 {
@@ -9,4 +11,14 @@ public class LicenseeResponse : Response
 
   public LicenseeResponse() : base() { }
   public LicenseeResponse(Exception ex) : base(ex) { }
+
+  public override string ToString()
+  {
+    var sb = new StringBuilder();
+    sb.AppendLine($"ID: {ID}");
+    sb.AppendLine($"Name: {Name}");
+    sb.AppendLine($"ApplicationId: {ApplicationId}");
+    sb.AppendLine($"ValidUntil: {ValidUntil}");
+    return sb.ToString();
+  }
 }

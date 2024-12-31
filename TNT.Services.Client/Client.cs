@@ -9,18 +9,16 @@ namespace TNT.Services.Client
 {
   public class Client
   {
-    private const string GET_APPLICATION_INFO_ENDPOINT = "/api/v1/GetApplicationInfo";
-    private const string GET_RELEASE_ENDPOINT = "/api/v1/GetRelease/";
-    private const string POST_AUTHORIZE_ENDPOINT = "/api/Authorization/PostAuthorize";
-    private const string POST_VERIFY_LICENSSEE = "api/v1/PostVerifyLicense";
+    private const string GET_APPLICATION_INFO_ENDPOINT = "/v1/GetApplicationInfo";
+    private const string GET_RELEASE_ENDPOINT = "/v1/GetRelease/";
+    private const string POST_AUTHORIZE_ENDPOINT = "/Authorization/PostAuthorize";
+    private const string POST_VERIFY_LICENSSEE = "/v1/PostVerifyLicense";
 
     protected IRestClient apiClient;
-    protected IRestClient tokenClient;
 
-    public Client(Uri apiUri, Uri tokenUri)
+    public Client(Uri apiUri)
     {
       apiClient = new RestClient(apiUri);
-      tokenClient = new RestClient(tokenUri);
     }
 
     private TOut ProcessRestResponse<TOut>(RestResponse? response)
@@ -83,7 +81,7 @@ namespace TNT.Services.Client
       return Task.Run(() => { return GetRelease(releaseId, jwt); });
     }
 
-    public LicenseeResponse VerifyLicense(LicenseeRequest licenseeRequest, JWT jwt)
+    public LicenseeResponse GetLicensee(LicenseeRequest licenseeRequest, JWT jwt)
     {
       RestRequest request = new RestRequest(POST_VERIFY_LICENSSEE, Method.Post)
         .AddHeader("Authorization", jwt.ToAuthToken)
@@ -104,7 +102,7 @@ namespace TNT.Services.Client
     {
       ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
       RestRequest request = new RestRequest(POST_AUTHORIZE_ENDPOINT, Method.Post).AddJsonBody(appCredential);
-      var response = tokenClient.ExecuteAsync(request).Result;
+      var response = apiClient.ExecuteAsync(request).Result;
 
       try
       {

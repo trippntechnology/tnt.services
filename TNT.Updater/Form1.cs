@@ -19,7 +19,7 @@ namespace TNT.Updater
       InitializeComponent();
       this.arguments = arguments;
       this.appInfo = appInfo;
-      this.client = new Client(arguments.ApiEndoint, arguments.AuthEndpoint);
+      this.client = new Client(arguments.BaseUri);
 
       Log("Calling InitializeAsync");
       InitializeAsync();
