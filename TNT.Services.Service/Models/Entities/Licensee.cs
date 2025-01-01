@@ -4,7 +4,7 @@ public class Licensee
 {
   public Guid ID { get; set; } = Guid.NewGuid();
   public string Name { get; set; } = string.Empty;
-  public int ApplicationId { get; set; }
+  public Guid ApplicationId { get; set; }
   public DateTimeOffset ValidUntil { get; set; }
 
   public string FormattedExpirationDate { get { return ValidUntil.ToString("MM/dd/yyyy"); } }

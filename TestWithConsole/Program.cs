@@ -5,24 +5,26 @@ internal class Program
 {
   private static void Main(string[] args)
   {
+    var appId = Guid.Parse("fa1f92e1-4beb-4675-9290-0af2265909a2");
+    var licenseeId = Guid.Parse("bc49bedc-80f9-4dca-b386-8739147f200d");
     var client = new Client(new Uri("https://localhost:5001/api"));
 
-    Console.Write($"Calling GetJWT(1, Secret1) ... ");
-    var jwt = client.GetJWT(1, "Secret1");
+    Console.Write($"Calling GetJWT({appId}, Secret1) ... ");
+    var jwt = client.GetJWT(appId, "Secret1");
     Console.WriteLine(jwt.IsSuccess);
 
     if (jwt.Token != null)
     {
-      Console.Write($"Calling GetApplicationInfo(1) ... ");
-      var appInfo = client.GetApplicationInfo(1, jwt.Token);
+      Console.WriteLine($"Calling GetApplicationInfo({appId}) ... ");
+      var appInfo = client.GetApplicationInfo(appId, jwt.Token);
       Console.WriteLine(appInfo?.IsSuccess);
       Console.WriteLine($"AppInfo: {appInfo}");
 
-      Console.Write($"Calling GetRelease(1) ... ");
-      var release = client.GetRelease(1, jwt.Token);
+      Console.Write($"Calling GetRelease({appInfo?.ReleaseID ?? 0}) ... ");
+      var release = client.GetRelease(appInfo?.ReleaseID ?? 0, jwt.Token);
       Console.WriteLine(release?.IsSuccess);
 
-      LicenseeRequest request = new LicenseeRequest() { ApplicationId = 1, LicenseeId = Guid.Parse("fe94e00e-16cb-41e7-9c11-69f7f719819e") };
+      LicenseeRequest request = new LicenseeRequest() { ApplicationId = appId, LicenseeId = licenseeId };
       Console.WriteLine($"Calling GetLicensee({request.ApplicationId}, {request.LicenseeId} )");
       Console.WriteLine("LicenseeResponse:");
       var licenseeResponse = client.GetLicensee(request, jwt.Token);

@@ -3,7 +3,7 @@
 public class LicenseeRequest
 {
   public Guid LicenseeId { get; set; }
-  public int ApplicationId { get; set; }
+  public Guid ApplicationId { get; set; }
 
   public override string ToString()
   {

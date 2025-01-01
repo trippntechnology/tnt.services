@@ -5,174 +5,173 @@ using TNT.Services.Service.Data;
 using TNT.Services.Service.Models;
 using TNT.Services.Service.Models.Entities;
 
-namespace TNT.Services.Service.Controllers
+namespace TNT.Services.Service.Controllers;
+
+public class LicenseesController : Controller
 {
-  public class LicenseesController : Controller
+  private readonly ApplicationDbContext _context;
+  private readonly ILogger<LicenseesController> _logger;
+
+  public LicenseesController(ApplicationDbContext context, ILogger<LicenseesController> logger)
   {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<LicenseesController> _logger;
+    _context = context;
+    _logger = logger;
+  }
 
-    public LicenseesController(ApplicationDbContext context, ILogger<LicenseesController> logger)
+  private List<LicenseePlus> GetLicenseePlus(List<Licensee> licensees, List<Models.Entities.Application> applications)
+  {
+    return (from l in licensees
+            join a in applications on l.ApplicationId equals a.ID
+            select new LicenseePlus(l, a.Name))
+            .OrderBy(l => l.ValidUntil)
+            .ToList();
+  }
+
+  // GET: Licensees
+  public IActionResult Index()
+  {
+    var applications = _context.Application.ToList();
+    var licensees = _context.Licensee.ToList();
+    return View(GetLicenseePlus(licensees, applications));
+  }
+
+  // GET: Licensees/Details/5
+  public async Task<IActionResult> Details(Guid? id)
+  {
+    if (id == null)
     {
-      _context = context;
-      _logger = logger;
+      return NotFound();
     }
 
-    private List<LicenseePlus> GetLicenseePlus(List<Licensee> licensees, List<Models.Entities.Application> applications)
+    var licensee = await _context.Licensee
+        .FirstOrDefaultAsync(m => m.ID == id);
+    if (licensee == null)
     {
-      return (from l in licensees
-              join a in applications on l.ApplicationId equals a.ID
-              select new LicenseePlus(l, a.Name))
-              .OrderBy(l => l.ValidUntil)
-              .ToList();
+      return NotFound();
     }
 
-    // GET: Licensees
-    public IActionResult Index()
+    var application = await _context.Application.FindAsync(licensee.ApplicationId);
+    var licenseePlus = new LicenseePlus(licensee, application?.Name ?? "");
+
+    return View(licenseePlus);
+  }
+
+  // GET: Licensees/Create
+  public IActionResult Create()
+  {
+    List<Application> applications = _context.Application.OrderBy(a => a.Name).ToList();
+    ViewBag.Applications = new SelectList(applications, "ID", "Name");
+    return View();
+  }
+
+  // POST: Licensees/Create
+  // To protect from overposting attacks, enable the specific properties you want to bind to.
+  // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> Create([Bind("ID,Name,ApplicationId,ValidUntil")] Licensee licensee)
+  {
+    if (ModelState.IsValid)
     {
-      var applications = _context.Application.ToList();
-      var licensees = _context.Licensee.ToList();
-      return View(GetLicenseePlus(licensees, applications));
-    }
-
-    // GET: Licensees/Details/5
-    public async Task<IActionResult> Details(Guid? id)
-    {
-      if (id == null)
-      {
-        return NotFound();
-      }
-
-      var licensee = await _context.Licensee
-          .FirstOrDefaultAsync(m => m.ID == id);
-      if (licensee == null)
-      {
-        return NotFound();
-      }
-
-      var application = await _context.Application.FindAsync(licensee.ApplicationId);
-      var licenseePlus = new LicenseePlus(licensee, application?.Name ?? "");
-
-      return View(licenseePlus);
-    }
-
-    // GET: Licensees/Create
-    public IActionResult Create()
-    {
-      List<Application> applications = _context.Application.OrderBy(a => a.Name).ToList();
-      ViewBag.Applications = new SelectList(applications, "ID", "Name");
-      return View();
-    }
-
-    // POST: Licensees/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("ID,Name,ApplicationId,ValidUntil")] Licensee licensee)
-    {
-      if (ModelState.IsValid)
-      {
-        _context.Add(licensee);
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-      }
-      return View(licensee);
-    }
-
-    // GET: Licensees/Edit/5
-    public async Task<IActionResult> Edit(Guid? id)
-    {
-      if (id == null)
-      {
-        return NotFound();
-      }
-
-      var licensee = await _context.Licensee.FindAsync(id);
-      if (licensee == null)
-      {
-        return NotFound();
-      }
-
-      //ViewBag.ApplicationId = licensee.ApplicationId;
-
-      var application = await _context.Application.FindAsync(licensee.ApplicationId);
-      if (application == null) return NotFound();
-
-      return View(new LicenseePlus(licensee, application.Name));
-    }
-
-    // POST: Licensees/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,ApplicationId,ValidUntil,ApplicationName")] Licensee licensee)
-    {
-      if (id != licensee.ID)
-      {
-        return NotFound();
-      }
-
-      if (ModelState.IsValid)
-      {
-        try
-        {
-          _context.Update(licensee);
-          await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-          if (!LicenseeExists(licensee.ID))
-          {
-            return NotFound();
-          }
-          else
-          {
-            throw;
-          }
-        }
-        return RedirectToAction(nameof(Index));
-      }
-      return View(licensee);
-    }
-
-    // GET: Licensees/Delete/5
-    public async Task<IActionResult> Delete(Guid? id)
-    {
-      if (id == null)
-      {
-        return NotFound();
-      }
-
-      var licensee = await _context.Licensee
-          .FirstOrDefaultAsync(m => m.ID == id);
-      if (licensee == null)
-      {
-        return NotFound();
-      }
-
-      return View(licensee);
-    }
-
-    // POST: Licensees/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-      var licensee = await _context.Licensee.FindAsync(id);
-      if (licensee != null)
-      {
-        _context.Licensee.Remove(licensee);
-      }
-
+      _context.Add(licensee);
       await _context.SaveChangesAsync();
       return RedirectToAction(nameof(Index));
     }
+    return View(licensee);
+  }
 
-    private bool LicenseeExists(Guid id)
+  // GET: Licensees/Edit/5
+  public async Task<IActionResult> Edit(Guid? id)
+  {
+    if (id == null)
     {
-      return _context.Licensee.Any(e => e.ID == id);
+      return NotFound();
     }
+
+    var licensee = await _context.Licensee.FindAsync(id);
+    if (licensee == null)
+    {
+      return NotFound();
+    }
+
+    //ViewBag.ApplicationId = licensee.ApplicationId;
+
+    var application = await _context.Application.FindAsync(licensee.ApplicationId);
+    if (application == null) return NotFound();
+
+    return View(new LicenseePlus(licensee, application.Name));
+  }
+
+  // POST: Licensees/Edit/5
+  // To protect from overposting attacks, enable the specific properties you want to bind to.
+  // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,ApplicationId,ValidUntil,ApplicationName")] Licensee licensee)
+  {
+    if (id != licensee.ID)
+    {
+      return NotFound();
+    }
+
+    if (ModelState.IsValid)
+    {
+      try
+      {
+        _context.Update(licensee);
+        await _context.SaveChangesAsync();
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!LicenseeExists(licensee.ID))
+        {
+          return NotFound();
+        }
+        else
+        {
+          throw;
+        }
+      }
+      return RedirectToAction(nameof(Index));
+    }
+    return View(licensee);
+  }
+
+  // GET: Licensees/Delete/5
+  public async Task<IActionResult> Delete(Guid? id)
+  {
+    if (id == null)
+    {
+      return NotFound();
+    }
+
+    var licensee = await _context.Licensee
+        .FirstOrDefaultAsync(m => m.ID == id);
+    if (licensee == null)
+    {
+      return NotFound();
+    }
+
+    return View(licensee);
+  }
+
+  // POST: Licensees/Delete/5
+  [HttpPost, ActionName("Delete")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> DeleteConfirmed(Guid id)
+  {
+    var licensee = await _context.Licensee.FindAsync(id);
+    if (licensee != null)
+    {
+      _context.Licensee.Remove(licensee);
+    }
+
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+  }
+
+  private bool LicenseeExists(Guid id)
+  {
+    return _context.Licensee.Any(e => e.ID == id);
   }
 }

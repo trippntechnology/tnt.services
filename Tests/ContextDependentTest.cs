@@ -21,9 +21,9 @@ namespace Tests
 				{
 					_Applications = new List<Application>
 					{
-						new Application(){ ID = 1, Name= "Application1"},
-						new Application(){ ID = 2, Name= "Application2"},
-						new Application(){ ID = 3, Name= "Application3"},
+						new Application(){ ID = Guid.NewGuid(), Name= "Application1"},
+						new Application(){ ID = Guid.NewGuid(), Name= "Application2"},
+						new Application(){ ID = Guid.NewGuid(), Name= "Application3"},
 					};
 				}
 				return _Applications;
@@ -39,7 +39,7 @@ namespace Tests
 					_Releases = new List<Release>
 					{
 						new Release() {
-							ApplicationID = 1,
+							ApplicationID = Applications.First().ID,
 							Date = DateTime.Now,
 							FileName = "setup.exe",
 							ID = 1,

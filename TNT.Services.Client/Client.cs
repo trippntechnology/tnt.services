@@ -5,114 +5,113 @@ using TNT.Services.Models;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
 
-namespace TNT.Services.Client
+namespace TNT.Services.Client;
+
+public class Client
 {
-  public class Client
+  private const string GET_APPLICATION_INFO_ENDPOINT = "/v1/GetApplicationInfo";
+  private const string GET_RELEASE_ENDPOINT = "/v1/GetRelease/";
+  private const string POST_AUTHORIZE_ENDPOINT = "/Authorization/PostAuthorize";
+  private const string POST_VERIFY_LICENSSEE = "/v1/PostVerifyLicense";
+
+  protected IRestClient apiClient;
+
+  public Client(Uri apiUri)
   {
-    private const string GET_APPLICATION_INFO_ENDPOINT = "/v1/GetApplicationInfo";
-    private const string GET_RELEASE_ENDPOINT = "/v1/GetRelease/";
-    private const string POST_AUTHORIZE_ENDPOINT = "/Authorization/PostAuthorize";
-    private const string POST_VERIFY_LICENSSEE = "/v1/PostVerifyLicense";
+    apiClient = new RestClient(apiUri);
+  }
 
-    protected IRestClient apiClient;
+  private TOut ProcessRestResponse<TOut>(RestResponse? response)
+  {
+    if (response == null) throw new Exception("Response was null");
+    if (response.Content == null) throw new Exception("Content was null");
 
-    public Client(Uri apiUri)
+    if (!response.IsSuccessful)
     {
-      apiClient = new RestClient(apiUri);
+      response.ErrorException?.also(it => throw it);
     }
 
-    private TOut ProcessRestResponse<TOut>(RestResponse? response)
+    return JsonConvert.DeserializeObject<TOut>(response.Content) ?? throw new Exception("Deserialization resulted in a null value");
+  }
+
+
+  public ApplicationInfo GetApplicationInfo(Guid appId, JWT jwt)
+  {
+    ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
+    RestRequest request = new RestRequest(GET_APPLICATION_INFO_ENDPOINT, Method.Get)
+      .AddHeader("Authorization", jwt.ToAuthToken)
+      .AddQueryParameter("applicationId", appId.ToString());
+    RestResponse response = apiClient.ExecuteAsync(request).Result;
+
+    try
     {
-      if (response == null) throw new Exception("Response was null");
-      if (response.Content == null) throw new Exception("Content was null");
-
-      if (!response.IsSuccessful)
-      {
-        response.ErrorException?.also(it => throw it);
-      }
-
-      return JsonConvert.DeserializeObject<TOut>(response.Content) ?? throw new Exception("Deserialization resulted in a null value");
+      return ProcessRestResponse<ApplicationInfo>(response);
     }
-
-
-    public ApplicationInfo GetApplicationInfo(int appId, JWT jwt)
+    catch (Exception ex)
     {
-      ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
-      RestRequest request = new RestRequest(GET_APPLICATION_INFO_ENDPOINT, Method.Get)
-        .AddHeader("Authorization", jwt.ToAuthToken)
-        .AddQueryParameter("applicationId", appId.ToString());
-      RestResponse response = apiClient.ExecuteAsync(request).Result;
-
-      try
-      {
-        return ProcessRestResponse<ApplicationInfo>(response);
-      }
-      catch (Exception ex)
-      {
-        return new ApplicationInfo(ex);
-      }
+      return new ApplicationInfo(ex);
     }
+  }
 
-    public Task<ApplicationInfo> GetApplicationInfoAsync(int appid, JWT jwt)
+  public Task<ApplicationInfo> GetApplicationInfoAsync(Guid appid, JWT jwt)
+  {
+    return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
+  }
+
+  public ReleaseResponse GetRelease(int releaseId, JWT jwt)
+  {
+    ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
+    RestRequest request = new RestRequest(GET_RELEASE_ENDPOINT, Method.Get)
+      .AddHeader("Authorization", jwt.ToAuthToken)
+      .AddQueryParameter("ReleaseId", releaseId.ToString());
+    var response = apiClient?.ExecuteAsync(request).Result;
+
+    try
     {
-      return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
+      return ProcessRestResponse<ReleaseResponse>(response);
     }
-
-    public ReleaseResponse GetRelease(int releaseId, JWT jwt)
+    catch (Exception ex)
     {
-      ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
-      RestRequest request = new RestRequest(GET_RELEASE_ENDPOINT, Method.Get)
-        .AddHeader("Authorization", jwt.ToAuthToken)
-        .AddQueryParameter("ReleaseId", releaseId.ToString());
-      var response = apiClient?.ExecuteAsync(request).Result;
-
-      try
-      {
-        return ProcessRestResponse<ReleaseResponse>(response);
-      }
-      catch (Exception ex)
-      {
-        return new ReleaseResponse(ex);
-      }
+      return new ReleaseResponse(ex);
     }
+  }
 
-    public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
+  public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
+  {
+    return Task.Run(() => { return GetRelease(releaseId, jwt); });
+  }
+
+  public LicenseeResponse GetLicensee(LicenseeRequest licenseeRequest, JWT jwt)
+  {
+    RestRequest request = new RestRequest(POST_VERIFY_LICENSSEE, Method.Post)
+      .AddHeader("Authorization", jwt.ToAuthToken)
+      .AddBody(licenseeRequest);
+    RestResponse response = apiClient.ExecuteAsync(request).Result;
+
+    try
     {
-      return Task.Run(() => { return GetRelease(releaseId, jwt); });
+      return ProcessRestResponse<LicenseeResponse>(response);
     }
-
-    public LicenseeResponse GetLicensee(LicenseeRequest licenseeRequest, JWT jwt)
+    catch (Exception ex)
     {
-      RestRequest request = new RestRequest(POST_VERIFY_LICENSSEE, Method.Post)
-        .AddHeader("Authorization", jwt.ToAuthToken)
-        .AddBody(licenseeRequest);
-      RestResponse response = apiClient.ExecuteAsync(request).Result;
-
-      try
-      {
-        return ProcessRestResponse<LicenseeResponse>(response);
-      }
-      catch (Exception ex)
-      {
-        return new LicenseeResponse(ex);
-      }
+      return new LicenseeResponse(ex);
     }
+  }
 
-    public JWTResponse GetJWT(int appId, string password)
+  public JWTResponse GetJWT(Guid appId, string password)
+  {
+    ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
+    RestRequest request = new RestRequest(POST_AUTHORIZE_ENDPOINT, Method.Post).AddJsonBody(appCredential);
+    var response = apiClient.ExecuteAsync(request).Result;
+
+    try
     {
-      ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
-      RestRequest request = new RestRequest(POST_AUTHORIZE_ENDPOINT, Method.Post).AddJsonBody(appCredential);
-      var response = apiClient.ExecuteAsync(request).Result;
-
-      try
-      {
-        var token = ProcessRestResponse<String>(response) ?? throw new Exception("Token is null");
-        return new JWTResponse(token);
-      }
-      catch (Exception ex)
-      {
-        return new JWTResponse(ex);
-      }
+      var token = ProcessRestResponse<String>(response) ?? throw new Exception("Token is null");
+      return new JWTResponse(token);
+    }
+    catch (Exception ex)
+    {
+      return new JWTResponse(ex);
     }
   }
 }

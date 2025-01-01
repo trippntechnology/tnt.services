@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TNT.Services.Models.Request;
 using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
@@ -11,95 +12,98 @@ using TNT.Services.Service.Models.Entities;
 
 namespace Tests
 {
-	[TestClass]
-	public class V1ControllerTests : ContextDependentTests
-	{
-		[TestMethod]
-		public void V1Controller_TestConnection()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			var sut = new V1Controller(mockContext.Object);
-			var result = sut.TestConnection();
-			Assert.IsTrue(result.IsSuccess);
-			Assert.AreEqual("Congratulations! You have successfully connected.", result.Message);
-		}
+  [TestClass]
+  public class V1ControllerTests : ContextDependentTests
+  {
+    public Guid appId { get { return Applications.First().ID; } }
 
-		[TestMethod]
-		public void V1Controller_GetApplicationInfo_InvalidApplicationId()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-			mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
+    [TestMethod]
+    public void V1Controller_TestConnection()
+    {
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      var sut = new V1Controller(mockContext.Object);
+      var result = sut.TestConnection();
+      Assert.IsTrue(result.IsSuccess);
+      Assert.AreEqual("Congratulations! You have successfully connected.", result.Message);
+    }
 
-			var sut = new V1Controller(mockContext.Object);
+    [TestMethod]
+    public void V1Controller_GetApplicationInfo_InvalidApplicationId()
+    {
+      var invalidAppId = Guid.NewGuid();
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+      mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
 
-			var result = sut.GetApplicationInfo(5);
+      var sut = new V1Controller(mockContext.Object);
 
-			Assert.IsFalse(result.IsSuccess);
-			Assert.AreEqual("ApplicationNotFoundException: Application ID, 5 does not exist", result.Message);
-		}
+      var result = sut.GetApplicationInfo(invalidAppId);
 
-		[TestMethod]
-		public void V1Controller_GetApplicationInfo_NoRelease()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-			mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
+      Assert.IsFalse(result.IsSuccess);
+      Assert.AreEqual($"ApplicationNotFoundException: Application ID, {invalidAppId} does not exist", result.Message);
+    }
 
-			var sut = new V1Controller(mockContext.Object);
-			var result = sut.GetApplicationInfo(1);
+    [TestMethod]
+    public void V1Controller_GetApplicationInfo_NoRelease()
+    {
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+      mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
 
-			Assert.IsFalse(result.IsSuccess);
-			Assert.AreEqual("ReleaseNotFoundException: Release associated with application ID, 1, could not be found", result.Message);
-		}
+      var sut = new V1Controller(mockContext.Object);
+      var result = sut.GetApplicationInfo(appId);
 
-		[TestMethod]
-		public void V1Controller_GetApplicationInfo_Valid()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-			mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
+      Assert.IsFalse(result.IsSuccess);
+      Assert.AreEqual($"ReleaseNotFoundException: Release associated with application ID, {appId}, could not be found", result.Message);
+    }
 
-			var sut = new V1Controller(mockContext.Object);
+    [TestMethod]
+    public void V1Controller_GetApplicationInfo_Valid()
+    {
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+      mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
 
-			var result = sut.GetApplicationInfo(1);
+      var sut = new V1Controller(mockContext.Object);
 
-			Assert.AreEqual(Applications[0].Name, result.Name);
-			Assert.AreEqual(Releases[0].Version, result.ReleaseVersion);
-			Assert.AreEqual(Releases[0].Date, result.ReleaseDate);
-			Assert.AreEqual(Releases[0].ID, result.ReleaseID);
-			Assert.IsTrue(result.IsSuccess);
-			Assert.IsTrue(string.IsNullOrWhiteSpace(result.Message));
-		}
+      var result = sut.GetApplicationInfo(appId);
 
-		[TestMethod]
-		public void V1Controller_GetRelease_InvalidReleaseID()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-			mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
+      Assert.AreEqual(Applications[0].Name, result.Name);
+      Assert.AreEqual(Releases[0].Version, result.ReleaseVersion);
+      Assert.AreEqual(Releases[0].Date, result.ReleaseDate);
+      Assert.AreEqual(Releases[0].ID, result.ReleaseID);
+      Assert.IsTrue(result.IsSuccess);
+      Assert.IsTrue(string.IsNullOrWhiteSpace(result.Message));
+    }
 
-			var sut = new V1Controller(mockContext.Object);
-			var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
+    [TestMethod]
+    public void V1Controller_GetRelease_InvalidReleaseID()
+    {
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+      mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
 
-			Assert.IsFalse(result.IsSuccess);
-			Assert.AreEqual("ReleaseNotFoundException: Release ID, 1, could not be found", result.Message);
-		}
+      var sut = new V1Controller(mockContext.Object);
+      var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
 
-		[TestMethod]
-		public void V1Controller_GetRelease_Valid()
-		{
-			var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-			mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-			mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
+      Assert.IsFalse(result.IsSuccess);
+      Assert.AreEqual("ReleaseNotFoundException: Release ID, 1, could not be found", result.Message);
+    }
 
-			var sut = new V1Controller(mockContext.Object);
-			var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
+    [TestMethod]
+    public void V1Controller_GetRelease_Valid()
+    {
+      var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+      mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+      mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
 
-			Assert.IsTrue(result.IsSuccess);
-			Assert.AreEqual(Releases[0].Date, result.ReleaseDate);
-			Assert.AreEqual(Convert.ToBase64String(Releases[0].Package), result.Package);
-			Assert.AreEqual(Releases[0].FileName, result.FileName);
-		}
-	}
+      var sut = new V1Controller(mockContext.Object);
+      var result = sut.PostRelease(new ReleaseRequest { ReleaseId = 1 });
+
+      Assert.IsTrue(result.IsSuccess);
+      Assert.AreEqual(Releases[0].Date, result.ReleaseDate);
+      Assert.AreEqual(Convert.ToBase64String(Releases[0].Package), result.Package);
+      Assert.AreEqual(Releases[0].FileName, result.FileName);
+    }
+  }
 }
