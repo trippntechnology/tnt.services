@@ -7,6 +7,9 @@ using TNT.Services.Models.Response;
 
 namespace TNT.Services.Client;
 
+/// <summary>
+/// Client used to access the TNT.Services.Service
+/// </summary>
 public class Client
 {
   private const string GET_APPLICATION_INFO_ENDPOINT = "/v1/GetApplicationInfo";
@@ -14,8 +17,15 @@ public class Client
   private const string POST_AUTHORIZE_ENDPOINT = "/Authorization/PostAuthorize";
   private const string POST_VERIFY_LICENSSEE = "/v1/PostVerifyLicense";
 
+  /// <summary>
+  /// <see cref="IRestClient"/> used to access service. This client is instantiated with the <see cref="Uri"/> endpoint
+  /// </summary>
   protected IRestClient apiClient;
 
+  /// <summary>
+  /// Initializes <see cref="apiClient"/> with a <see cref="Uri"/> to the endpoint
+  /// </summary>
+  /// <param name="apiUri"><see cref="Uri"/> specifying the api endpoint</param>
   public Client(Uri apiUri)
   {
     apiClient = new RestClient(apiUri);
@@ -34,7 +44,12 @@ public class Client
     return JsonConvert.DeserializeObject<TOut>(response.Content) ?? throw new Exception("Deserialization resulted in a null value");
   }
 
-
+  /// <summary>
+  /// Gets <see cref="ApplicationInfo"/> for a specified <paramref name="appId"/> and <paramref name="jwt"/>
+  /// </summary>
+  /// <param name="appId"><see cref="Guid"/> representing the app id of the application</param>
+  /// <param name="jwt"><see cref="JWT"/> representing the bearer token</param>
+  /// <returns><see cref="ApplicationInfo"/> for the requested application</returns>
   public ApplicationInfo GetApplicationInfo(Guid appId, JWT jwt)
   {
     ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
@@ -53,11 +68,23 @@ public class Client
     }
   }
 
-  public Task<ApplicationInfo> GetApplicationInfoAsync(Guid appid, JWT jwt)
+  /// <summary>
+  /// Gets <see cref="Task{ApplicationInfo}"/> for a specified <paramref name="appId"/> and <paramref name="jwt"/>
+  /// </summary>
+  /// <param name="appId"><see cref="Guid"/> representing the app id of the application</param>
+  /// <param name="jwt"><see cref="JWT"/> representing the bearer token</param>
+  /// <returns><see cref="Task{ApplicationInfo}"/> for the requested application</returns>
+  public Task<ApplicationInfo> GetApplicationInfoAsync(Guid appId, JWT jwt)
   {
-    return Task.Run(() => { return GetApplicationInfo(appid, jwt); });
+    return Task.Run(() => { return GetApplicationInfo(appId, jwt); });
   }
 
+  /// <summary>
+  /// Gets <see cref="ReleaseResponse"/> for a specified <paramref name="releaseId"/> and <paramref name="jwt"/>
+  /// </summary>
+  /// <param name="releaseId">release id</param>
+  /// <param name="jwt"><see cref="JWT"/> representing the bearer token</param>
+  /// <returns><see cref="ReleaseResponse"/> for the requested release</returns>
   public ReleaseResponse GetRelease(int releaseId, JWT jwt)
   {
     ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
@@ -76,11 +103,23 @@ public class Client
     }
   }
 
+  /// <summary>
+  /// Gets <see cref="Task{ReleaseResponse}"/> for a specified <paramref name="releaseId"/> and <paramref name="jwt"/>
+  /// </summary>
+  /// <param name="releaseId">release id</param>
+  /// <param name="jwt"><see cref="JWT"/> representing the bearer token</param>
+  /// <returns><see cref="Task{ReleaseResponse}"/> for the requested release</returns>
   public Task<ReleaseResponse> GetReleaseAsync(int releaseId, JWT jwt)
   {
     return Task.Run(() => { return GetRelease(releaseId, jwt); });
   }
 
+  /// <summary>
+  /// Gets <see cref="LicenseeResponse"/> for a specified <paramref name="licenseeRequest"/> and <paramref name="jwt"/>
+  /// </summary>
+  /// <param name="licenseeRequest"><see cref="LicenseeRequest"/> representing the request</param>
+  /// <param name="jwt"><see cref="JWT"/> representing the bearer token</param>
+  /// <returns><see cref="LicenseeResponse"/> for the requested license</returns>
   public LicenseeResponse GetLicensee(LicenseeRequest licenseeRequest, JWT jwt)
   {
     RestRequest request = new RestRequest(POST_VERIFY_LICENSSEE, Method.Post)
@@ -98,6 +137,12 @@ public class Client
     }
   }
 
+  /// <summary>
+  /// Used to return a <see cref="JWTResponse"/> containing the bearer token to access other methods.
+  /// </summary>
+  /// <param name="appId"><see cref="Guid"/> representing the app id</param>
+  /// <param name="password">password associated with the app id</param>
+  /// <returns><see cref="JWTResponse"/> if the credentials are valid</returns>
   public JWTResponse GetJWT(Guid appId, string password)
   {
     ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
