@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TNT.Services.Service.Data;
@@ -7,6 +8,7 @@ using TNT.Services.Service.Models.Entities;
 
 namespace TNT.Services.Service.Controllers;
 
+[Authorize]
 public class LicenseesController : Controller
 {
   private readonly ApplicationDbContext _context;
