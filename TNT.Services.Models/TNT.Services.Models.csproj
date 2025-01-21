@@ -1,11 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<Authors>Tripp'n Technology, LLC.</Authors>
+		<Company>$(Authors)</Company>
+		<ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
+		<Copyright>Copyright 2019 $(Authors)</Copyright>
+		<DebugType>embedded</DebugType>
+		<Description>TNT Services Models</Description>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeSymbols>False</IncludeSymbols>
 		<Nullable>enable</Nullable>
-		<AssemblyVersion>1.0.0.1</AssemblyVersion>
-		<FileVersion>1.0.0.1</FileVersion>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<TargetFramework>net9.0</TargetFramework>
+		<Title>TNT Services Models</Title>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="docs\readme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<Target Name="CopyNupkg" AfterTargets="Pack" Condition="$(Configuration) == 'Release'">
+		<ItemGroup>
+			<NupkgFiles Include="$(ProjectDir)bin\$(Configuration)\$(ProjectName).$(PackageVersion).nupkg" />
+			<NupkgOutputPath Include="D:\NugetRepo" />
+		</ItemGroup>
+		<Copy SourceFiles="@(NupkgFiles)" DestinationFolder="D:\NugetRepo" />
+	</Target>
 
 </Project>

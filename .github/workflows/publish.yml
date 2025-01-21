@@ -21,5 +21,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Publish
+    - name: Publish Client
       run: dotnet nuget push "TNT.Services.Client\bin\Release\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s "https://api.nuget.org/v3/index.json" -n --skip-duplicate
+    - name: Publish Models
+      run: dotnet nuget push "TNT.Services.Models\bin\Release\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s "https://api.nuget.org/v3/index.json" -n --skip-duplicate
