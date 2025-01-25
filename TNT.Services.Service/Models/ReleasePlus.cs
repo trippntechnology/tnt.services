@@ -1,9 +1,10 @@
-﻿using TNT.Services.Service.Models.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using TNT.Services.Service.Models.Entities;
 
-namespace TNT.Services.Service.Models
+namespace TNT.Services.Service.Models;
+
+public class ReleasePlus : Release
 {
-  public class ReleasePlus : Release
-  {
-    public string ApplicationName { get; set; } = String.Empty;
-  }
+  [Display(Name = "Application Name")]
+  public string ApplicationName { get; [Display(Name = "Application Name")] set; } = String.Empty;
 }
