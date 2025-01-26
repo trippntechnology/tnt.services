@@ -30,10 +30,10 @@ public class AuthorizationControllerTests : ContextDependentTests
     var mockConfig = new Mock<IConfiguration>();
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-    var result = sut.PostAuthorize(null);
+    var result = sut.Authorize(null);
     Assert.AreEqual(400, (result as BadRequestResult).StatusCode);
 
-    result = sut.PostAuthorize(new ApplicationCredential());
+    result = sut.Authorize(new ApplicationCredential());
     Assert.AreEqual(400, (result as BadRequestObjectResult).StatusCode);
   }
 
@@ -49,11 +49,11 @@ public class AuthorizationControllerTests : ContextDependentTests
     var mockConfig = new Mock<IConfiguration>();
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-    var result = sut.PostAuthorize(new ApplicationCredential() { Secret = "secret" }) as BadRequestObjectResult;
+    var result = sut.Authorize(new ApplicationCredential() { Secret = "secret" }) as BadRequestObjectResult;
     Assert.AreEqual(400, result.StatusCode);
     Assert.AreEqual("Invalid credentials", result.Value);
 
-    result = sut.PostAuthorize(new ApplicationCredential() { ID = appId, Secret = "foo" }) as BadRequestObjectResult;
+    result = sut.Authorize(new ApplicationCredential() { ID = appId, Secret = "foo" }) as BadRequestObjectResult;
     Assert.AreEqual(400, result.StatusCode);
     Assert.AreEqual("Invalid credentials", result.Value);
   }
@@ -83,7 +83,7 @@ public class AuthorizationControllerTests : ContextDependentTests
 
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object, mockDateTime.Object, mockGuidUtil.Object);
 
-    var result = sut.PostAuthorize(new ApplicationCredential { ID = appId, Secret = "secret" }) as OkObjectResult;
+    var result = sut.Authorize(new ApplicationCredential { ID = appId, Secret = "secret" }) as OkObjectResult;
     Assert.AreEqual(200, result.StatusCode);
     Console.WriteLine($"SMT: {result.Value}");
     var values = result.Value.ToString().Split('.');

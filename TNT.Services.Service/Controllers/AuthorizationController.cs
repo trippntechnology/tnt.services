@@ -26,15 +26,8 @@ namespace TNT.Services.Service.Controllers
       _guidUtil = guidUtil ?? new GuidUtil();
     }
 
-    [Obsolete("Call PostAuthorize instead")]
     [HttpPost]
     public ActionResult Authorize(ApplicationCredential credential)
-    {
-      return PostAuthorize(credential);
-    }
-
-    [HttpPost]
-    public ActionResult PostAuthorize(ApplicationCredential credential)
     {
       if (credential != null && credential.Secret != null)
       {
