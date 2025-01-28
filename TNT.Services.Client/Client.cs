@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using RestSharp;
-using TNT.Commons;
+﻿using RestSharp;
 using TNT.Services.Models;
 using TNT.Services.Models.Request;
 using TNT.Services.Models.Response;
@@ -10,39 +8,13 @@ namespace TNT.Services.Client;
 /// <summary>
 /// Client used to access the TNT.Services.Service
 /// </summary>
-public class Client
+public class Client(Uri baseUri) : BaseClient(baseUri)
 {
   private const string GET_APPLICATION_INFO_ENDPOINT = "/v1/GetApplicationInfo";
   private const string GET_RELEASE_ENDPOINT = "/v1/GetRelease/";
   private const string POST_AUTHORIZE_ENDPOINT = "/Authorization/PostAuthorize";
   private const string POST_VERIFY_LICENSSEE = "/v1/PostVerifyLicense";
 
-  /// <summary>
-  /// <see cref="IRestClient"/> used to access service. This client is instantiated with the <see cref="Uri"/> endpoint
-  /// </summary>
-  protected IRestClient apiClient;
-
-  /// <summary>
-  /// Initializes <see cref="apiClient"/> with a <see cref="Uri"/> to the endpoint
-  /// </summary>
-  /// <param name="apiUri"><see cref="Uri"/> specifying the api endpoint</param>
-  public Client(Uri apiUri)
-  {
-    apiClient = new RestClient(apiUri);
-  }
-
-  private TOut ProcessRestResponse<TOut>(RestResponse? response)
-  {
-    if (response == null) throw new Exception("Response was null");
-    if (response.Content == null) throw new Exception("Content was null");
-
-    if (!response.IsSuccessful)
-    {
-      response.ErrorException?.also(it => throw it);
-    }
-
-    return JsonConvert.DeserializeObject<TOut>(response.Content) ?? throw new Exception("Deserialization resulted in a null value");
-  }
 
   /// <summary>
   /// Gets <see cref="ApplicationInfo"/> for a specified <paramref name="appId"/> and <paramref name="jwt"/>
@@ -56,7 +28,7 @@ public class Client
     RestRequest request = new RestRequest(GET_APPLICATION_INFO_ENDPOINT, Method.Get)
       .AddHeader("Authorization", jwt.ToAuthToken)
       .AddQueryParameter("applicationId", appId.ToString());
-    RestResponse response = apiClient.ExecuteAsync(request).Result;
+    RestResponse response = client.ExecuteAsync(request).Result;
 
     try
     {
@@ -91,7 +63,7 @@ public class Client
     RestRequest request = new RestRequest(GET_RELEASE_ENDPOINT, Method.Get)
       .AddHeader("Authorization", jwt.ToAuthToken)
       .AddQueryParameter("ReleaseId", releaseId.ToString());
-    var response = apiClient?.ExecuteAsync(request).Result;
+    var response = client?.ExecuteAsync(request).Result;
 
     try
     {
@@ -125,7 +97,7 @@ public class Client
     RestRequest request = new RestRequest(POST_VERIFY_LICENSSEE, Method.Post)
       .AddHeader("Authorization", jwt.ToAuthToken)
       .AddBody(licenseeRequest);
-    RestResponse response = apiClient.ExecuteAsync(request).Result;
+    RestResponse response = client.ExecuteAsync(request).Result;
 
     try
     {
@@ -147,7 +119,7 @@ public class Client
   {
     ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
     RestRequest request = new RestRequest(POST_AUTHORIZE_ENDPOINT, Method.Post).AddJsonBody(appCredential);
-    var response = apiClient.ExecuteAsync(request).Result;
+    var response = client.ExecuteAsync(request).Result;
 
     try
     {
@@ -157,6 +129,27 @@ public class Client
     catch (Exception ex)
     {
       return new JWTResponse(ex);
+    }
+  }
+
+  /// <summary>
+  /// Gets an associated Json Web Token (<see cref="JWT"/>) for given <paramref name="appId"/> and <paramref name="password"/>
+  /// </summary>
+  /// <returns><see cref="JWT"/></returns>
+  public DtoResponse<JWT> Authorize(Guid appId, string password)
+  {
+    ApplicationCredential appCredential = new ApplicationCredential() { ID = appId, Secret = password };
+    RestRequest request = new RestRequest(Endpoint.Authorize.uri, Method.Post).AddJsonBody(appCredential);
+    var response = client.ExecuteAsync(request).Result;
+
+    try
+    {
+      var token = ProcessRestResponse<String>(response);
+      return new DtoResponse<JWT>(new JWT(token));
+    }
+    catch (Exception ex)
+    {
+      return new DtoResponse<JWT>(ex);
     }
   }
 }

@@ -78,7 +78,7 @@ public class V2Controller : BaseController
     }
   }
 
-  [HttpPost]
+  [HttpGet]
   public DtoResponse<LicenseeInfoDto> LicenseeInfo([FromQuery] Guid licenseeId, [FromQuery] Guid appId)
   {
     try
