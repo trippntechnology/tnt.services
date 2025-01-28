@@ -5,28 +5,26 @@ using TNT.Commons;
 namespace TNT.Services.Client;
 
 /// <summary>
-/// 
+/// Base client
 /// </summary>
-/// <param name="baseUri"></param>
 public abstract class BaseClient(Uri baseUri)
 {
   /// <summary>
-  /// 
+  /// <see cref="IRestClient"/> used by subclasses
   /// </summary>
   protected readonly IRestClient client = new RestClient(baseUri);
 
   /// <summary>
-  /// 
+  /// Base <see cref="Uri"/>
   /// </summary>
   protected readonly Uri baseUri = baseUri;
 
   /// <summary>
-  /// 
+  /// Deserializes the content from a <see cref="RestResponse"/>
   /// </summary>
-  /// <typeparam name="TOut"></typeparam>
-  /// <param name="response"></param>
-  /// <returns></returns>
-  /// <exception cref="Exception"></exception>
+  /// <typeparam name="TOut">Type of object that content represents</typeparam>
+  /// <returns>Object of type <typeparamref name="TOut"/> if exists, null otherwise</returns>
+  /// <exception cref="Exception">Thrown when unable to deserialize <paramref name="response"/></exception>
   protected TOut ProcessRestResponse<TOut>(RestResponse? response)
   {
     if (response == null) throw new Exception("Response was null");

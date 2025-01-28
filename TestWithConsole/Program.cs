@@ -16,28 +16,29 @@ internal class Program
 
     Console.Write($"Calling GetJWT({appId}, {secret}) ... ");
     var response = client.Authorize(appId, secret);
-    Console.WriteLine(response.IsSuccess);
+    Console.WriteLine(response.IsSuccess ? "Success" : "Failed");
     var jwt = response.Data;
 
     if (jwt != null)
     {
       var authClient = new AuthenticatedClient(baseUri, jwt);
 
-      Console.WriteLine($"Calling ApplicationInfo({appId}) ... ");
+      Console.Write($"Calling ApplicationInfo({appId}) ... ");
       DtoResponse<ApplicationInfoDto> appInfoResponse = authClient.ApplicationInfo(appId);
-      Console.WriteLine(appInfoResponse.IsSuccess);
+      Console.WriteLine(appInfoResponse.IsSuccess ? "Success" : "Failed");
       var appInfo = appInfoResponse.Data;
       Console.WriteLine($"AppInfo:");
       Console.WriteLine(Serialize(appInfo));
 
       Console.Write($"Calling ReleaseInfo({appInfo?.ReleaseID ?? 0}) ... ");
       DtoResponse<ReleaseInfoDto> releaseResponse = authClient.ReleaseInfo(appInfo?.ReleaseID ?? 0);
-      Console.WriteLine(releaseResponse.IsSuccess);
+      Console.WriteLine(releaseResponse.IsSuccess ? "Success" : "Failed");
       var releaseInfo = releaseResponse.Data;
 
       LicenseeRequest request = new LicenseeRequest() { ApplicationId = appId, LicenseeId = licenseeId };
-      Console.WriteLine($"Calling LicenseeInfo({request.ApplicationId}, {request.LicenseeId} )");
+      Console.Write($"Calling LicenseeInfo({request.ApplicationId}, {request.LicenseeId} ) ... ");
       DtoResponse<LicenseeInfoDto> licenseeResponse = authClient.LicenseeInfo(request.ApplicationId, request.LicenseeId);
+      Console.WriteLine(licenseeResponse.IsSuccess ? "Success" : "Failed");
       var licenseeInfoDto = licenseeResponse.Data;
       Console.WriteLine("LicenseeInfoDto:");
       Console.WriteLine(Serialize(licenseeInfoDto));

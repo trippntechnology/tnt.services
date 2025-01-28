@@ -6,19 +6,16 @@ using TNT.Services.Models.Request;
 namespace TNT.Services.Client;
 
 /// <summary>
-/// 
+/// Client used to access endpoints that need to be authenticated. Authentication can be done using the <see cref="Client"/>
 /// </summary>
-/// <param name="baseUri"></param>
-/// <param name="jwt"></param>
 public class AuthenticatedClient(Uri baseUri, JWT jwt) : BaseClient(baseUri)
 {
   private readonly JWT jwt = jwt;
 
   /// <summary>
-  /// 
+  /// Gets the application info for a specific <paramref name="appId"/>
   /// </summary>
-  /// <param name="appId"></param>
-  /// <returns></returns>
+  /// <returns><see cref="DtoResponse{ApplicationInfoDto}"/></returns>
   public DtoResponse<ApplicationInfoDto> ApplicationInfo(Guid appId)
   {
     ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
@@ -38,11 +35,9 @@ public class AuthenticatedClient(Uri baseUri, JWT jwt) : BaseClient(baseUri)
   }
 
   /// <summary>
-  /// 
+  /// Gets the release info for a specific <paramref name="releaseId"/>
   /// </summary>
-  /// <param name="releaseId"></param>
-  /// <param name="jwt"></param>
-  /// <returns></returns>
+  /// <returns><see cref="DtoResponse{ReleaseInfoDto}"/></returns>
   public DtoResponse<ReleaseInfoDto> ReleaseInfo(int releaseId)
   {
     ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
@@ -62,11 +57,9 @@ public class AuthenticatedClient(Uri baseUri, JWT jwt) : BaseClient(baseUri)
   }
 
   /// <summary>
-  /// 
+  /// Gets the licensee info for a specific <paramref name="licenseeId"/> and <paramref name="appId"/>
   /// </summary>
-  /// <param name="appId"></param>
-  /// <param name="licenseeId"></param>
-  /// <returns></returns>
+  /// <returns><see cref="DtoResponse{LicenseeInfoDto}"/></returns>
   public DtoResponse<LicenseeInfoDto> LicenseeInfo(Guid appId, Guid licenseeId)
   {
     RestRequest request = new RestRequest(Endpoint.LicenseeInfo.uri, Method.Get)
