@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TNT.Commons;
 using TNT.Services.Models.Request;
 using TNT.Services.Service.Data;
 
@@ -29,7 +28,7 @@ namespace TNT.Services.Service.Controllers
     [HttpPost]
     public ActionResult Authorize(ApplicationCredential credential)
     {
-      if (credential != null && credential.Secret != null)
+      if (!String.IsNullOrWhiteSpace(credential.Secret))
       {
         var application = _context.Application.Where(a => a.ID == credential.ID && a.Secret == credential.Secret).FirstOrDefault();
 
@@ -37,14 +36,14 @@ namespace TNT.Services.Service.Controllers
         {
           //create claims details based on the user information
           var claims = new[] {
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration[Setting.SUBJECT] ?? string.Empty),
+                    new Claim(JwtRegisteredClaimNames.Sub, _configuration[Setting.SUBJECT]!),
                     new Claim(JwtRegisteredClaimNames.Jti, _guidUtil.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, _dateTimeUtil.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer),
                     new Claim("Id", application.ID.ToString()),
                     new Claim("Name", application.Name)
                    };
 
-          SymmetricSecurityKey? key = _configuration[Setting.KEY]?.let(it => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(it)));
+          SymmetricSecurityKey? key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration[Setting.KEY]!));
 
           SigningCredentials signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

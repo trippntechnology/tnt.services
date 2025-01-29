@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
 
 namespace NUnitTests;
 
+[ExcludeFromCodeCoverage]
 public class V2ControllerTests
 {
   //private var baseUri = new Uri("https://localhost:5001/api");
@@ -31,7 +33,7 @@ public class V2ControllerTests
   //{
   //  var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
   //  mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
-    
+
   //  var sut = new V2Controller(mockContext.Object);
 
   //  var result = sut.ApplicationInfo(appId);

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 using TNT.Services.Models.Request;
 using TNT.Services.Service;
 using TNT.Services.Service.Controllers;
@@ -10,42 +11,36 @@ using TNT.Services.Service.Models.Entities;
 
 namespace NUnitTests;
 
+[ExcludeFromCodeCoverage]
 public class AuthorizationControllerTests : ContextDependentTests
 {
-  private Guid appId = Guid.NewGuid();
+  private Application application = new Application() { ID = Guid.NewGuid(), Secret = Guid.NewGuid().ToString() };
 
   [Test]
   public void AuthorizationController_Authorize_Invalid_Credential()
   {
     var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>()
-    {
-      new Application() { ID = appId, Secret = "secret"}
-    }));
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>() { application }));
     var mockConfig = new Mock<IConfiguration>();
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
-
-    var result = sut.Authorize(new ApplicationCredential());
-    Assert.That((result as BadRequestObjectResult)?.StatusCode, Is.EqualTo(400));
+    var result = sut.Authorize(new ApplicationCredential()) as BadRequestResult;
+    Assert.That(result?.StatusCode, Is.EqualTo(400));
   }
 
   [Test]
   public void AuthorizationController_Authorize_Invalid_Application()
   {
     var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>()
-    {
-      new Application() { ID = appId, Secret = "secret"}
-    }));
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>() { application }));
 
     var mockConfig = new Mock<IConfiguration>();
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-    var result = sut.Authorize(new ApplicationCredential() { Secret = "secret" }) as BadRequestObjectResult;
+    var result = sut.Authorize(new ApplicationCredential() { Secret = application.Secret }) as BadRequestObjectResult;
     Assert.That(result?.StatusCode, Is.EqualTo(400));
     Assert.That(result.Value, Is.EqualTo("Invalid credentials"));
 
-    result = sut.Authorize(new ApplicationCredential() { ID = appId, Secret = "foo" }) as BadRequestObjectResult;
+    result = sut.Authorize(new ApplicationCredential() { ID = application.ID, Secret = "foo" }) as BadRequestObjectResult;
     Assert.That(result?.StatusCode, Is.EqualTo(400));
     Assert.That(result.Value, Is.EqualTo("Invalid credentials"));
   }
@@ -54,10 +49,7 @@ public class AuthorizationControllerTests : ContextDependentTests
   public void AuthorizationController_Authorize_Valid()
   {
     var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
-    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>()
-    {
-      new Application() { ID = appId, Name = "appName", Secret = "secret"}
-    }));
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(new List<Application>() { application }));
 
     var mockConfig = new Mock<IConfiguration>();
     mockConfig.Setup(m => m[Setting.SUBJECT]).Returns("subject");
@@ -75,7 +67,7 @@ public class AuthorizationControllerTests : ContextDependentTests
 
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object, mockDateTime.Object, mockGuidUtil.Object);
 
-    var result = sut.Authorize(new ApplicationCredential { ID = appId, Secret = "secret" }) as OkObjectResult;
+    var result = sut.Authorize(new ApplicationCredential { ID = application.ID, Secret = application.Secret }) as OkObjectResult;
     Assert.That(result?.StatusCode, Is.EqualTo(200));
     Console.WriteLine($"SMT: {result.Value}");
     var values = result?.Value?.ToString()?.Split('.') ?? new string[0];

@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TNT.Services.Service.Models.Entities;
 
 namespace NUnitTests;
 
+[ExcludeFromCodeCoverage]
 public abstract class ContextDependentTests
 {
   private List<Application>? _Applications = null;
