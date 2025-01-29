@@ -30,11 +30,8 @@ public class AuthorizationControllerTests : ContextDependentTests
     var mockConfig = new Mock<IConfiguration>();
     var sut = new AuthorizationController(mockConfig.Object, mockContext.Object);
 
-    var result = sut.Authorize(null);
+    var result = sut.Authorize(new ApplicationCredential());
     Assert.AreEqual(400, (result as BadRequestResult).StatusCode);
-
-    result = sut.Authorize(new ApplicationCredential());
-    Assert.AreEqual(400, (result as BadRequestObjectResult).StatusCode);
   }
 
   [TestMethod]

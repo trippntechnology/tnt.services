@@ -37,7 +37,7 @@ public class V2Controller : BaseController
       var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
       if (release == null) throw new ReleaseNotFoundException(application.ID);
 
-      ApplicationInfoDto dto = new ApplicationInfoDto
+      ApplicationInfoDto dto = new ApplicationInfoDto()
       {
         ApplicationId = application.ID,
         Name = application.Name,
