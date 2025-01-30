@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using TNT.Commons;
 using TNT.Services.Client;
-using TNT.Services.Models.Response;
+using TNT.Services.Models;
+using TNT.Services.Models.Dto;
 using TNT.Updater.Properties;
 
 namespace TNT.Updater
@@ -9,17 +10,15 @@ namespace TNT.Updater
   public partial class Form1 : Form
   {
     private readonly Arguments arguments;
-    private readonly Client client;
-    private readonly ApplicationInfo appInfo;
+    private readonly AuthenticatedClient client;
+    private readonly ApplicationInfoDto appInfo;
 
-    private ReleaseResponse? releaseResponse = null;
-
-    public Form1(Arguments arguments, ApplicationInfo appInfo)
+    public Form1(Arguments arguments, ApplicationInfoDto appInfo, AuthenticatedClient authClient)
     {
       InitializeComponent();
       this.arguments = arguments;
       this.appInfo = appInfo;
-      this.client = new Client(arguments.BaseUri);
+      this.client = authClient;
 
       Log("Calling InitializeAsync");
       InitializeAsync();
@@ -31,7 +30,7 @@ namespace TNT.Updater
       Text = string.Format(Resources.Caption, this.arguments.ProductName);
       labelInstalledVersion.Text = this.arguments.FileVersion?.ToString();
       labelCurrentVersion.Text = appInfo.ReleaseVersion;
-      labelReleaseDate.Text = appInfo.ReleaseDate?.ToLocalTime().ToString();
+      labelReleaseDate.Text = appInfo.ReleaseDate?.DateTime.ToString();
 
       var installedVersion = this.arguments.FileVersion;
       var currentVersion = appInfo.ReleaseVersion?.let(it => Version.Parse(it));
@@ -46,20 +45,14 @@ namespace TNT.Updater
 
     private void buttonInstall_Click(object sender, EventArgs e)
     {
-      if (releaseResponse == null)
+      DtoResponse<ReleaseInfoDto> response = client.ReleaseInfo(appInfo.ReleaseID);
+      if (!response.IsSuccess)
       {
-        JWTResponse jwtResponse = client.GetJWT(arguments.ApplicationId, arguments.ApplicationPassword);
-        var token = jwtResponse.Token;
-        if (token == null) return;
-
-        ReleaseResponse response = client.GetReleaseAsync(appInfo.ReleaseID, token).Result;
-        if (response == null || !response.IsSuccess)
-        {
-          MessageBox.Show(response?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-          return;
-        }
-        releaseResponse = response;
+        MessageBox.Show(response?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
       }
+
+      if (response.Data == null) return;
 
       if (ProcessIsRunning(arguments.ProcessName))
       {
@@ -67,8 +60,8 @@ namespace TNT.Updater
       }
       else
       {
-        var path = Path.Combine(Path.GetTempPath(), releaseResponse.FileName);
-        var package = Convert.FromBase64String(releaseResponse.Package);
+        var path = Path.Combine(Path.GetTempPath(), response.Data.FileName ?? string.Empty);
+        var package = Convert.FromBase64String(response.Data.Package);
         File.WriteAllBytes(path, package);
 
         var process = new Process();
