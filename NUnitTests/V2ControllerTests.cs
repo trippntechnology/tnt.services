@@ -76,4 +76,71 @@ public class V2ControllerTests : ContextDependentTests
     Assert.That(applicationInfo.ReleaseDate, Is.EqualTo(new DateTimeOffset(releaseDate)));
     Assert.That(applicationInfo.ReleaseVersion, Is.EqualTo(Releases[0].Version));
   }
+
+  [Test]
+  public void ReleaseInfo_InvalidReleaseID()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+    mockContext.Setup(m => m.Release).Returns(GetDbSet(new List<Release>()));
+
+    var sut = new V2Controller(mockContext.Object);
+    var result = sut.ReleaseInfo(1);
+
+    Assert.That(result.IsSuccess, Is.False);
+    Assert.That(result.Message, Is.EqualTo("ReleaseNotFoundException: Release ID, 1, could not be found"));
+  }
+
+  [Test]
+  public void ReleaseInfo_Valid()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+    mockContext.Setup(m => m.Release).Returns(GetDbSet(Releases));
+
+    var sut = new V2Controller(mockContext.Object);
+    var result = sut.ReleaseInfo(1);
+    Assert.That(result.IsSuccess, Is.True);
+
+    var releaseInfo = result.Data;
+    DateTimeOffset dateTimeOffset = Releases[0].Date ?? DateTimeOffset.Now;
+
+    Assert.That(releaseInfo, Is.Not.Null);
+    Assert.That(releaseInfo.ReleaseDate, Is.EqualTo(dateTimeOffset));
+    Assert.That(releaseInfo.Package, Is.EqualTo(Convert.ToBase64String(Releases[0].Package!)));
+    Assert.That(releaseInfo.FileName, Is.EqualTo(Releases[0].FileName));
+  }
+
+  [Test]
+  public void LicenseeInfo_Invalid()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    mockContext.Setup(m => m.Application).Returns(GetDbSet(Applications));
+    mockContext.Setup(m => m.Licensee).Returns(GetDbSet(new List<Licensee>()));
+
+    var sut = new V2Controller(mockContext.Object);
+    var result = sut.LicenseeInfo(Licensees[0].ID, Applications[0].ID);
+
+    Assert.That(result.IsSuccess, Is.False);
+    Assert.That(result.Message, Is.EqualTo("LicenseeNotFoundException: Licensee could not be found"));
+  }
+
+  [Test]
+  public void LicenseeInfo_Valid()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    mockContext.Setup(m => m.Licensee).Returns(GetDbSet(Licensees));
+
+    var sut = new V2Controller(mockContext.Object);
+    var result = sut.LicenseeInfo(Licensees[0].ID, Applications[0].ID);
+    Assert.That(result.IsSuccess, Is.True);
+
+    var releaseInfo = result.Data;
+
+    Assert.That(releaseInfo, Is.Not.Null);
+    Assert.That(releaseInfo.ID, Is.EqualTo(Licensees[0].ID));
+    Assert.That(releaseInfo.Name, Is.EqualTo(Licensees[0].Name));
+    Assert.That(releaseInfo.ApplicationId, Is.EqualTo(Applications[0].ID));
+    Assert.That(releaseInfo.ValidUntil, Is.EqualTo(Licensees[0].ValidUntil));
+  }
 }

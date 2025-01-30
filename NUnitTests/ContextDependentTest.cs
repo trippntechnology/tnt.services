@@ -11,6 +11,7 @@ public abstract class ContextDependentTests
 {
   private List<Application>? _Applications = null;
   private List<Release>? _Releases = null;
+  private List<Licensee>? _Licensees = null;
 
   protected List<Application> Applications
   {
@@ -47,6 +48,27 @@ public abstract class ContextDependentTests
         };
       }
       return _Releases;
+    }
+  }
+
+  protected List<Licensee> Licensees
+  {
+    get
+    {
+      if (_Licensees == null)
+      {
+        _Licensees = new List<Licensee>()
+        {
+          new Licensee()
+          {
+            ID = Guid.NewGuid(),
+            Name = "License",
+            ApplicationId = Applications.First().ID,
+            ValidUntil = DateTimeOffset.Now.AddMonths(1)
+          }
+        };
+      }
+      return _Licensees;
     }
   }
 
