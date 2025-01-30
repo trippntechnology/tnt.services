@@ -4,7 +4,7 @@
   public class ReleaseInfoDto
   {
     public int Id { get; set; }
-    public DateTimeOffset? ReleaseDate { get; set; } = null;
+    public DateTimeOffset ReleaseDate { get; set; }
     public string Package { get; set; } = string.Empty;
     public string FileName { get; set; } = string.Empty;
 

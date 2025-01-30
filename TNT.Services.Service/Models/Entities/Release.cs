@@ -10,6 +10,6 @@ public class Release
   [Display(Name = "File Name")]
   public string FileName { get; set; } = String.Empty;
   public string Version { get; set; } = String.Empty;
-  public byte[]? Package { get; set; } = null;
-  public DateTime? Date { get; set; } = null;
+  public byte[] Package { get; set; } = new byte[0];
+  public DateTime Date { get; set; }
 }

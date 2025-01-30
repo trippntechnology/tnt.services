@@ -67,7 +67,7 @@ public class V2ControllerTests : ContextDependentTests
     Assert.That(string.IsNullOrWhiteSpace(result.Message), Is.True);
 
     var applicationInfo = result.Data;
-    var releaseDate = Releases[0].Date ?? DateTime.Now;
+    var releaseDate = Releases[0].Date;
 
     Assert.That(applicationInfo, Is.Not.Null);
     Assert.That(applicationInfo.ApplicationId, Is.EqualTo(Applications[0].ID));
@@ -103,7 +103,7 @@ public class V2ControllerTests : ContextDependentTests
     Assert.That(result.IsSuccess, Is.True);
 
     var releaseInfo = result.Data;
-    DateTimeOffset dateTimeOffset = Releases[0].Date ?? DateTimeOffset.Now;
+    DateTimeOffset dateTimeOffset = Releases[0].Date;
 
     Assert.That(releaseInfo, Is.Not.Null);
     Assert.That(releaseInfo.ReleaseDate, Is.EqualTo(dateTimeOffset));

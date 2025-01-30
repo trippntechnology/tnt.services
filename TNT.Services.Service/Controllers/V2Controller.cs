@@ -66,7 +66,7 @@ public class V2Controller : BaseController
       {
         Id = release.ID,
         FileName = release.FileName,
-        Package = Convert.ToBase64String(release.Package ?? new byte[0]),
+        Package = Convert.ToBase64String(release.Package),
         ReleaseDate = release.Date
       };
 
