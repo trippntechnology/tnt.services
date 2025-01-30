@@ -1,15 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-TNT.Services.Service-C1CF2EE3-A76A-412B-BF2C-6D1E601C1F12</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <AssemblyVersion>1.0.0.6</AssemblyVersion>
-    <FileVersion>1.0.0.6</FileVersion>
+		<Authors>Tripp'n Technology, LLC.</Authors>
+		<Company>$(Authors)</Company>
+		<Configurations>Debug;Release</Configurations>
+		<ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
+		<Copyright>Copyright 2019 $(Authors)</Copyright>
+		<DebugType>embedded</DebugType>
+		<Description>TNT Services Client</Description>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeSymbols>False</IncludeSymbols>
+		<Nullable>enable</Nullable>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
     <Platforms>AnyCPU;x64</Platforms>
-  </PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Title>TNT Services Client</Title>
+    <UserSecretsId>aspnet-TNT.Services.Service-C1CF2EE3-A76A-412B-BF2C-6D1E601C1F12</UserSecretsId>
+		<Version>1.0.2</Version>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
