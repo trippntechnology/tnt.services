@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="NUnitTests/NUnitTests.csproj" />
+  <Project Path="Tests/Tests.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="TestWithConsole/TestWithConsole.csproj" />
+  <Project Path="TNT.Services.Client/TNT.Services.Client.csproj">
+    <Build Solution="*|x64" Project="false" />
+  </Project>
+  <Project Path="TNT.Services.Models/TNT.Services.Models.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="TNT.Services.Service/TNT.Services.Service.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="tnt.updater/TNT.Updater.csproj" />
+</Solution>
