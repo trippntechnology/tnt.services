@@ -215,9 +215,9 @@ namespace TNT.Services.Service.Migrations
 
             modelBuilder.Entity("TNT.Services.Service.Models.Entities.Application", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -238,8 +238,8 @@ namespace TNT.Services.Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -259,10 +259,10 @@ namespace TNT.Services.Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ApplicationID")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationID")
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FileName")
@@ -270,6 +270,7 @@ namespace TNT.Services.Service.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Package")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("Version")
