@@ -44,11 +44,20 @@ namespace TNT.Services.Service
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.EnsureCreated();
-                //app.Logger.LogInformation("Migrating database");
-                //dbContext.Database.Migrate();
-                app.Logger.LogInformation("Seeding database");
-                await SeedData.InitializeAsync(scope.ServiceProvider, app.Logger);
+                try
+                {
+                    //dbContext.Database.EnsureCreated();
+                    app.Logger.LogInformation("Applying database migrations");
+                    dbContext.Database.Migrate();
+
+                    app.Logger.LogInformation("Seeding database");
+                    await SeedData.InitializeAsync(scope.ServiceProvider, app.Logger);
+                }
+                catch (Exception ex)
+                {
+                    app.Logger.LogError(ex, "An error occurred while initializing the database");
+                    throw;
+                }
             }
 
             // Configure the HTTP request pipeline.
