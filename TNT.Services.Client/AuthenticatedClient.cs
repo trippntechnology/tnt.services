@@ -78,4 +78,24 @@ public class AuthenticatedClient(Uri baseUri, JWT jwt) : BaseClient(baseUri)
     }
   }
 
+  /// <summary>
+  /// Adds an analytics event to the system.
+  /// </summary>
+  /// <returns><see cref="DtoResponse{int}"/> containing the ID of the created analytic record</returns>
+  public DtoResponse<int> AddAnalytic(AnalyticDto analyticDto)
+  {
+    RestRequest request = new RestRequest(Endpoint.AddAnalytic.uri, Method.Post)
+      .AddHeader("Authorization", jwt.ToAuthToken)
+      .AddJsonBody(analyticDto);
+    RestResponse response = client.Execute(request);
+
+    try
+    {
+      return ProcessRestResponse<DtoResponse<int>>(response);
+    }
+    catch (Exception ex)
+    {
+      return new DtoResponse<int>(ex);
+    }
+  }
 }
