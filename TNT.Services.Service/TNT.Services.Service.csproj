@@ -19,7 +19,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Title>TNT Services Client</Title>
     <UserSecretsId>aspnet-TNT.Services.Service-C1CF2EE3-A76A-412B-BF2C-6D1E601C1F12</UserSecretsId>
-		<Version>1.0.2</Version>
+		<Version>1.1.0</Version>
 	</PropertyGroup>
 
   <ItemGroup>

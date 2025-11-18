@@ -1,0 +1,75 @@
+@model TNT.Services.Service.Models.Entities.Analytic
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Analytic Details";
+}
+
+<h1>Analytic Details</h1>
+
+<div>
+    <h4>Event Information</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Timestamp)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Timestamp)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Metadata)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                if (!string.IsNullOrEmpty(Model.Metadata))
+                {
+                    try
+                    {
+                        var jsonDoc = JsonDocument.Parse(Model.Metadata);
+                        var root = jsonDoc.RootElement;
+                        
+                        if (root.ValueKind == JsonValueKind.Object)
+                        {
+                            <dl class="row">
+                                @foreach (var property in root.EnumerateObject())
+                                {
+                                    <dt class="col-sm-3">@property.Name</dt>
+                                    <dd class="col-sm-9">@property.Value.GetRawText()</dd>
+                                }
+                            </dl>
+                        }
+                        else
+                        {
+                            <pre>@Model.Metadata</pre>
+                        }
+                    }
+                    catch
+                    {
+                        <pre>@Model.Metadata</pre>
+                    }
+                }
+                else
+                {
+                    <span>No metadata</span>
+                }
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
