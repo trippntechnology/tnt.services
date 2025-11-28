@@ -16,12 +16,12 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<TargetFramework>net9.0</TargetFramework>
 		<Title>TNT Services Client</Title>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RestSharp" Version="112.1.0" />
-		<PackageReference Include="TNT.Commons" Version="1.1.0" />
+		<PackageReference Include="RestSharp" Version="113.0.0" />
+		<PackageReference Include="TNT.Commons" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
