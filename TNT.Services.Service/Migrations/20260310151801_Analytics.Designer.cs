@@ -11,8 +11,8 @@ using TNT.Services.Service.Data;
 namespace TNT.Services.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251114165244_AddAnalytic")]
-    partial class AddAnalytic
+    [Migration("20260310151801_Analytics")]
+    partial class Analytics
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

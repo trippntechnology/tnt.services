@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TNT.Services.Service.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAnalytic : Migration
+    public partial class Analytics : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

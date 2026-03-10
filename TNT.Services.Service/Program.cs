@@ -46,10 +46,6 @@ namespace TNT.Services.Service
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 try
                 {
-                    //dbContext.Database.EnsureCreated();
-                    app.Logger.LogInformation("Applying database migrations");
-                    dbContext.Database.Migrate();
-
                     app.Logger.LogInformation("Seeding database");
                     await SeedData.InitializeAsync(scope.ServiceProvider, app.Logger);
                 }
