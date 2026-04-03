@@ -13,105 +13,106 @@ namespace TNT.Services.Service.Controllers;
 [ApiController]
 public class V1Controller : BaseController
 {
-  private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
-  public V1Controller(ApplicationDbContext context)
-  {
-    _context = context;
-  }
-
-  [HttpGet]
-  public Response TestConnection()
-  {
-    return new Response() { Message = "Congratulations! You have successfully connected." };
-  }
-
-  [Obsolete("Use GetApplicationInfo")]
-  [HttpPost]
-  public ApplicationInfo PostApplicationInfo(ApplicationRequest applicationRequest) => GetApplicationInfo(applicationRequest.ApplicationID);
-
-  [HttpGet]
-  public ApplicationInfo GetApplicationInfo([FromQuery] Guid applicationId)
-  {
-    ApplicationInfo? response = null;
-
-    try
+    public V1Controller(ApplicationDbContext context)
     {
-      var application = _context.Application.Where(a => a.ID == applicationId).FirstOrDefault();
-      if (application == null) throw new ApplicationNotFoundException(applicationId);
-
-      var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
-      if (release == null) throw new ReleaseNotFoundException(application.ID);
-
-      response = new ApplicationInfo
-      {
-        Name = application.Name,
-        ReleaseID = release.ID,
-        ReleaseDate = release.Date,
-        ReleaseVersion = release.Version
-      };
-    }
-    catch (Exception ex)
-    {
-      response = new ApplicationInfo(ex);
+        _context = context;
     }
 
-    return response;
-  }
-
-  [HttpGet]
-  public ReleaseResponse GetRelease([FromQuery] int releaseId)
-  {
-    return PostRelease(new ReleaseRequest() { ReleaseId = releaseId });
-  }
-
-  [HttpPost]
-  public ReleaseResponse PostRelease(ReleaseRequest releaseRequest)
-  {
-    ReleaseResponse response;
-
-    try
+    [HttpGet]
+    public Response TestConnection()
     {
-      var release = _context.Release.Where(r => r.ID == releaseRequest.ReleaseId).FirstOrDefault() ??
-      throw new ReleaseNotFoundException(releaseRequest.ReleaseId, "Release ID, {0}, could not be found");
-
-      response = new ReleaseResponse()
-      {
-        FileName = release.FileName,
-        Package = Convert.ToBase64String(release.Package ?? new byte[0]),
-        ReleaseDate = release.Date
-      };
-    }
-    catch (Exception ex)
-    {
-      response = new ReleaseResponse(ex);
+        return new Response() { Message = "Congratulations! You have successfully connected." };
     }
 
-    return response;
-  }
+    [Obsolete("Use GetApplicationInfo instead. POST should not be used for read-only operations.")]
+    [HttpPost]
+    public ApplicationInfo PostApplicationInfo(ApplicationRequest applicationRequest) => GetApplicationInfo(applicationRequest.ApplicationID);
 
-  [HttpPost]
-  public LicenseeResponse PostVerifyLicense(LicenseeRequest licenseeRequest)
-  {
-    LicenseeResponse response;
-
-    try
+    [HttpGet]
+    public ApplicationInfo GetApplicationInfo([FromQuery] Guid applicationId)
     {
-      var licensee = _context.Licensee.Where(l => l.ID == licenseeRequest.LicenseeId && l.ApplicationId == licenseeRequest.ApplicationId).FirstOrDefault() ??
-        throw new LicenseeNotFoundException();
-      response = new LicenseeResponse()
-      {
-        ID = licensee.ID,
-        Name = licensee.Name,
-        ApplicationId = licensee.ApplicationId,
-        ValidUntil = licensee.ValidUntil,
-      };
-    }
-    catch (Exception ex)
-    {
-      response = new LicenseeResponse(ex);
+        ApplicationInfo? response = null;
+
+        try
+        {
+            var application = _context.Application.Where(a => a.ID == applicationId).FirstOrDefault();
+            if (application == null) throw new ApplicationNotFoundException(applicationId);
+
+            var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
+            if (release == null) throw new ReleaseNotFoundException(application.ID);
+
+            response = new ApplicationInfo
+            {
+                Name = application.Name,
+                ReleaseID = release.ID,
+                ReleaseDate = release.Date,
+                ReleaseVersion = release.Version
+            };
+        }
+        catch (Exception ex)
+        {
+            response = new ApplicationInfo(ex);
+        }
+
+        return response;
     }
 
-    return response;
-  }
+    [HttpGet]
+    public ReleaseResponse GetRelease([FromQuery] int releaseId)
+    {
+        ReleaseResponse response;
+
+        try
+        {
+            var release = _context.Release.Where(r => r.ID == releaseId).FirstOrDefault() ??
+            throw new ReleaseNotFoundException(releaseId, "Release ID, {0}, could not be found");
+
+            response = new ReleaseResponse()
+            {
+                FileName = release.FileName,
+                Package = Convert.ToBase64String(release.Package ?? new byte[0]),
+                ReleaseDate = release.Date
+            };
+        }
+        catch (Exception ex)
+        {
+            response = new ReleaseResponse(ex);
+        }
+
+        return response;
+    }
+
+    [Obsolete("Use GetRelease instead. POST should not be used for read-only operations.")]
+    [HttpPost]
+    public ReleaseResponse PostRelease(ReleaseRequest releaseRequest)
+    {
+        return GetRelease(releaseRequest.ReleaseId);
+    }
+
+    [HttpPost]
+    public LicenseeResponse PostVerifyLicense(LicenseeRequest licenseeRequest)
+    {
+        LicenseeResponse response;
+
+        try
+        {
+            var licensee = _context.Licensee.Where(l => l.ID == licenseeRequest.LicenseeId && l.ApplicationId == licenseeRequest.ApplicationId).FirstOrDefault() ??
+              throw new LicenseeNotFoundException();
+            response = new LicenseeResponse()
+            {
+                ID = licensee.ID,
+                Name = licensee.Name,
+                ApplicationId = licensee.ApplicationId,
+                ValidUntil = licensee.ValidUntil,
+            };
+        }
+        catch (Exception ex)
+        {
+            response = new LicenseeResponse(ex);
+        }
+
+        return response;
+    }
 }
