@@ -12,25 +12,16 @@ namespace TNT.Services.Service.Controllers;
 /// <summary>
 /// API controller for version 2 endpoints providing application, release, licensee, and analytics information.
 /// </summary>
-/// <remarks>
-/// All endpoints require JWT Bearer token authentication. Uses the ApplicationDbContext for data access.
-/// </remarks>
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class V2Controller : BaseController
+public class V2Controller(ApplicationDbContext dbContext) : BaseController
 {
-    private readonly ApplicationDbContext _context;
-
-    public V2Controller(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
 
     /// <summary>
     /// Tests the API connection and authentication.
     /// </summary>
-    /// <returns>A success message wrapped in a DtoResponse.</returns>
     [HttpGet]
     public DtoResponse<string> Test()
     {
@@ -38,18 +29,17 @@ public class V2Controller : BaseController
     }
 
     /// <summary>
-    /// Retrieves information about a specific application and its latest release.
+    /// Retrieves application and release information.
     /// </summary>
-    /// <returns>Application and release information wrapped in a DtoResponse.</returns>
     [HttpGet]
     public DtoResponse<ApplicationInfoDto> ApplicationInfo([FromQuery] Guid applicationId)
     {
         try
         {
-            var application = _context.Application.Where(a => a.ID == applicationId).FirstOrDefault();
+            var application = _dbContext.Application.Where(a => a.ID == applicationId).FirstOrDefault();
             if (application == null) throw new ApplicationNotFoundException(applicationId);
 
-            var release = _context.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
+            var release = _dbContext.Release.Where(r => r.ApplicationID == application.ID).OrderByDescending(r => r.Date).FirstOrDefault();
             if (release == null) throw new ReleaseNotFoundException(application.ID);
 
             ApplicationInfoDto dto = new ApplicationInfoDto()
@@ -70,15 +60,14 @@ public class V2Controller : BaseController
     }
 
     /// <summary>
-    /// Retrieves information about a specific release package.
+    /// Retrieves release information with package encoded as Base64.
     /// </summary>
-    /// <returns>Release information with the package encoded as Base64 wrapped in a DtoResponse.</returns>
     [HttpGet]
     public DtoResponse<ReleaseInfoDto> ReleaseInfo([FromQuery] int releaseId)
     {
         try
         {
-            var release = _context.Release.Where(r => r.ID == releaseId).FirstOrDefault() ??
+            var release = _dbContext.Release.Where(r => r.ID == releaseId).FirstOrDefault() ??
             throw new ReleaseNotFoundException(releaseId, "Release ID, {0}, could not be found");
 
             ReleaseInfoDto dto = new ReleaseInfoDto()
@@ -98,15 +87,14 @@ public class V2Controller : BaseController
     }
 
     /// <summary>
-    /// Retrieves information about a specific licensee.
+    /// Retrieves licensee information.
     /// </summary>
-    /// <returns>Licensee information wrapped in a DtoResponse.</returns>
     [HttpGet]
     public DtoResponse<LicenseeInfoDto> LicenseeInfo([FromQuery] Guid licenseeId, [FromQuery] Guid appId)
     {
         try
         {
-            var licensee = _context.Licensee.Where(l => l.ID == licenseeId && l.ApplicationId == appId).FirstOrDefault() ??
+            var licensee = _dbContext.Licensee.Where(l => l.ID == licenseeId && l.ApplicationId == appId).FirstOrDefault() ??
               throw new LicenseeNotFoundException();
 
             LicenseeInfoDto dto = new LicenseeInfoDto()
@@ -126,9 +114,8 @@ public class V2Controller : BaseController
     }
 
     /// <summary>
-    /// Adds a new analytics event to the system.
+    /// Adds a new analytics event.
     /// </summary>
-    /// <returns>The ID of the newly created analytic record wrapped in a DtoResponse.</returns>
     [HttpPost]
     public DtoResponse<int> AddAnalytic([FromBody] AnalyticDto dto)
     {
@@ -143,8 +130,8 @@ public class V2Controller : BaseController
                 Metadata = System.Text.Json.JsonSerializer.Serialize(dto.Metadata)
             };
 
-            _context.Analytics.Add(analytic);
-            _context.SaveChanges();
+            _dbContext.Analytics.Add(analytic);
+            _dbContext.SaveChanges();
 
             return new DtoResponse<int>(analytic.Id);
         }
