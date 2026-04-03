@@ -10,92 +10,92 @@ namespace TNT.Services.Client;
 /// </summary>
 public class AuthenticatedClient(Uri baseUri, JWT jwt) : BaseClient(baseUri)
 {
-  private readonly JWT jwt = jwt;
+    private readonly JWT jwt = jwt;
 
-  /// <summary>
-  /// Gets the application info for a specific <paramref name="appId"/>
-  /// </summary>
-  /// <returns><see cref="DtoResponse{ApplicationInfoDto}"/></returns>
-  public DtoResponse<ApplicationInfoDto> ApplicationInfo(Guid appId)
-  {
-    ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
-    RestRequest request = new RestRequest(Endpoint.ApplicationInfo.uri, Method.Get)
-      .AddHeader("Authorization", jwt.ToAuthToken)
-      .AddQueryParameter("applicationId", appId.ToString());
-    RestResponse response = client.Execute(request);
+    /// <summary>
+    /// Gets the application info for a specific <paramref name="appId"/>
+    /// </summary>
+    /// <returns><see cref="DtoResponse{T}"/> containing application information</returns>
+    public DtoResponse<ApplicationInfoDto> ApplicationInfo(Guid appId)
+    {
+        ApplicationRequest appRequest = new ApplicationRequest() { ApplicationID = appId };
+        RestRequest request = new RestRequest(Endpoint.ApplicationInfo.uri, Method.Get)
+          .AddHeader("Authorization", jwt.ToAuthToken)
+          .AddQueryParameter("applicationId", appId.ToString());
+        RestResponse response = client.Execute(request);
 
-    try
-    {
-      return ProcessRestResponse<DtoResponse<ApplicationInfoDto>>(response);
+        try
+        {
+            return ProcessRestResponse<DtoResponse<ApplicationInfoDto>>(response);
+        }
+        catch (Exception ex)
+        {
+            return new DtoResponse<ApplicationInfoDto>(ex);
+        }
     }
-    catch (Exception ex)
-    {
-      return new DtoResponse<ApplicationInfoDto>(ex);
-    }
-  }
 
-  /// <summary>
-  /// Gets the release info for a specific <paramref name="releaseId"/>
-  /// </summary>
-  /// <returns><see cref="DtoResponse{ReleaseInfoDto}"/></returns>
-  public DtoResponse<ReleaseInfoDto> ReleaseInfo(int releaseId)
-  {
-    ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
-    RestRequest request = new RestRequest(Endpoint.ReleaseInfo.uri, Method.Get)
-      .AddHeader("Authorization", jwt.ToAuthToken)
-      .AddQueryParameter("ReleaseId", releaseId.ToString());
-    RestResponse response = client.Execute(request);
+    /// <summary>
+    /// Gets the release info for a specific <paramref name="releaseId"/>
+    /// </summary>
+    /// <returns><see cref="DtoResponse{T}"/> containing release information</returns>
+    public DtoResponse<ReleaseInfoDto> ReleaseInfo(int releaseId)
+    {
+        ReleaseRequest releaseRequest = new ReleaseRequest() { ReleaseId = releaseId };
+        RestRequest request = new RestRequest(Endpoint.ReleaseInfo.uri, Method.Get)
+          .AddHeader("Authorization", jwt.ToAuthToken)
+          .AddQueryParameter("ReleaseId", releaseId.ToString());
+        RestResponse response = client.Execute(request);
 
-    try
-    {
-      return ProcessRestResponse<DtoResponse<ReleaseInfoDto>>(response);
+        try
+        {
+            return ProcessRestResponse<DtoResponse<ReleaseInfoDto>>(response);
+        }
+        catch (Exception ex)
+        {
+            return new DtoResponse<ReleaseInfoDto>(ex);
+        }
     }
-    catch (Exception ex)
-    {
-      return new DtoResponse<ReleaseInfoDto>(ex);
-    }
-  }
 
-  /// <summary>
-  /// Gets the licensee info for a specific <paramref name="licenseeId"/> and <paramref name="appId"/>
-  /// </summary>
-  /// <returns><see cref="DtoResponse{LicenseeInfoDto}"/></returns>
-  public DtoResponse<LicenseeInfoDto> LicenseeInfo(Guid appId, Guid licenseeId)
-  {
-    RestRequest request = new RestRequest(Endpoint.LicenseeInfo.uri, Method.Get)
-      .AddHeader("Authorization", jwt.ToAuthToken)
-      .AddQueryParameter("appId", appId.ToString())
-      .AddQueryParameter("licenseeId", licenseeId.ToString());
-    RestResponse response = client.Execute(request);
+    /// <summary>
+    /// Gets the licensee info for a specific <paramref name="licenseeId"/> and <paramref name="appId"/>
+    /// </summary>
+    /// <returns><see cref="DtoResponse{T}"/> containing licensee information</returns>
+    public DtoResponse<LicenseeInfoDto> LicenseeInfo(Guid appId, Guid licenseeId)
+    {
+        RestRequest request = new RestRequest(Endpoint.LicenseeInfo.uri, Method.Get)
+          .AddHeader("Authorization", jwt.ToAuthToken)
+          .AddQueryParameter("appId", appId.ToString())
+          .AddQueryParameter("licenseeId", licenseeId.ToString());
+        RestResponse response = client.Execute(request);
 
-    try
-    {
-      return ProcessRestResponse<DtoResponse<LicenseeInfoDto>>(response);
+        try
+        {
+            return ProcessRestResponse<DtoResponse<LicenseeInfoDto>>(response);
+        }
+        catch (Exception ex)
+        {
+            return new DtoResponse<LicenseeInfoDto>(ex);
+        }
     }
-    catch (Exception ex)
-    {
-      return new DtoResponse<LicenseeInfoDto>(ex);
-    }
-  }
 
-  /// <summary>
-  /// Adds an analytics event to the system.
-  /// </summary>
-  /// <returns><see cref="DtoResponse{int}"/> containing the ID of the created analytic record</returns>
-  public DtoResponse<int> AddAnalytic(AnalyticDto analyticDto)
-  {
-    RestRequest request = new RestRequest(Endpoint.AddAnalytic.uri, Method.Post)
-      .AddHeader("Authorization", jwt.ToAuthToken)
-      .AddJsonBody(analyticDto);
-    RestResponse response = client.Execute(request);
+    /// <summary>
+    /// Adds an analytics event to the system.
+    /// </summary>
+    /// <returns><see cref="DtoResponse{T}"/> containing the ID of the created analytic record</returns>
+    public DtoResponse<int> AddAnalytic(AnalyticDto analyticDto)
+    {
+        RestRequest request = new RestRequest(Endpoint.AddAnalytic.uri, Method.Post)
+          .AddHeader("Authorization", jwt.ToAuthToken)
+          .AddJsonBody(analyticDto);
+        RestResponse response = client.Execute(request);
 
-    try
-    {
-      return ProcessRestResponse<DtoResponse<int>>(response);
+        try
+        {
+            return ProcessRestResponse<DtoResponse<int>>(response);
+        }
+        catch (Exception ex)
+        {
+            return new DtoResponse<int>(ex);
+        }
     }
-    catch (Exception ex)
-    {
-      return new DtoResponse<int>(ex);
-    }
-  }
 }
