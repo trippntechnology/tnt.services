@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Diagnostics.CodeAnalysis;
+using TNT.Services.Models.Dto;
 using TNT.Services.Service.Controllers;
 using TNT.Services.Service.Data;
 using TNT.Services.Service.Models.Entities;
@@ -142,5 +143,74 @@ public class V2ControllerTests : ContextDependentTests
     Assert.That(releaseInfo.Name, Is.EqualTo(Licensees[0].Name));
     Assert.That(releaseInfo.ApplicationId, Is.EqualTo(Applications[0].ID));
     Assert.That(releaseInfo.ValidUntil, Is.EqualTo(Licensees[0].ValidUntil));
+  }
+
+  [Test]
+  public void AddAnalytic_Valid()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    var analyticsList = new List<Analytic>();
+    var mockAnalyticsDbSet = GetDbSet(analyticsList);
+
+    mockContext.Setup(m => m.Analytics).Returns(mockAnalyticsDbSet);
+    mockContext.Setup(m => m.Analytics.Add(It.IsAny<Analytic>()))
+      .Callback<Analytic>(a => {
+        a.Id = analyticsList.Count + 1;
+        analyticsList.Add(a);
+      });
+    mockContext.Setup(m => m.SaveChanges()).Returns(1);
+
+    var sut = new V2Controller(mockContext.Object);
+    var analyticDto = new AnalyticDto("TestEvent")
+    {
+      Metadata = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } }
+    };
+
+    var result = sut.AddAnalytic(analyticDto);
+
+    Assert.That(result.IsSuccess, Is.True);
+    Assert.That(result.Data, Is.GreaterThan(0));
+    mockContext.Verify(m => m.SaveChanges(), Times.Once);
+  }
+
+  [Test]
+  public void AddAnalytic_NullDto()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    var sut = new V2Controller(mockContext.Object);
+
+    var result = sut.AddAnalytic(null!);
+
+    Assert.That(result.IsSuccess, Is.False);
+    Assert.That(result.Message, Does.Contain("ArgumentNullException"));
+    mockContext.Verify(m => m.SaveChanges(), Times.Never);
+  }
+
+  [Test]
+  public void AddAnalytic_SerializesMetadata()
+  {
+    var mockContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+    Analytic? capturedAnalytic = null;
+    var analyticsList = new List<Analytic>();
+    var mockAnalyticsDbSet = GetDbSet(analyticsList);
+
+    mockContext.Setup(m => m.Analytics).Returns(mockAnalyticsDbSet);
+    mockContext.Setup(m => m.Analytics.Add(It.IsAny<Analytic>()))
+      .Callback<Analytic>(a => capturedAnalytic = a);
+    mockContext.Setup(m => m.SaveChanges()).Returns(1);
+
+    var sut = new V2Controller(mockContext.Object);
+    var analyticDto = new AnalyticDto("ApplicationStart")
+    {
+      Metadata = new Dictionary<string, string> { { "version", "1.0" }, { "platform", "Windows" } }
+    };
+
+    var result = sut.AddAnalytic(analyticDto);
+
+    Assert.That(result.IsSuccess, Is.True);
+    Assert.That(capturedAnalytic, Is.Not.Null);
+    Assert.That(capturedAnalytic!.EventType, Is.EqualTo("ApplicationStart"));
+    Assert.That(capturedAnalytic.Metadata, Does.Contain("version"));
+    Assert.That(capturedAnalytic.Metadata, Does.Contain("Windows"));
   }
 }
