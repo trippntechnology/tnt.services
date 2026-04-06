@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <Version>1.1.0</Version>
+    <Authors>Tripp'n Technology, LLC.</Authors>
+    <Company>$(Authors)</Company>
+    <ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
+    <Copyright>Copyright 2026 $(Authors)</Copyright>
+    <DebugType>embedded</DebugType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IncludeSymbols>False</IncludeSymbols>
+    <Nullable>enable</Nullable>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+</Project>

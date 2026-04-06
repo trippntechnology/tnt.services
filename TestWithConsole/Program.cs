@@ -9,9 +9,9 @@ internal class Program
   private static void Main(string[] args)
   {
     var baseUri = new Uri("https://localhost:5001/api");
-    var appId = Guid.Parse("d8d4ed77-5a04-465d-aa87-024eda92108d");
-    var secret = "Secret1";
-    var licenseeId = Guid.Parse("bc49bedc-80f9-4dca-b386-8739147f200d");
+    var appId = Guid.Parse("1b4f29eb-3543-413e-8b7c-30a2bd182fed");
+    var secret = "secret";
+    var licenseeId = Guid.Parse("b6ce5ba1-4632-40a9-8e1e-3bb1c5f426ed");
     var client = new Client(baseUri);
 
     Console.Write($"Calling GetJWT({appId}, {secret}) ... ");
