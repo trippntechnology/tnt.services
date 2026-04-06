@@ -185,7 +185,7 @@ namespace TNT.Update.Service.Controllers
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
       var release = await _context.Release.FindAsync(id);
-      release?.also(async it =>
+      release?.Also(async it =>
       {
         _context.Release.Remove(it);
         await _context.SaveChangesAsync();

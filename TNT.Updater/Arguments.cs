@@ -56,7 +56,7 @@ public class Arguments : ArgumentParser.ArgumentParser
     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executable);
     CompanyName = fvi.CompanyName ?? string.Empty;
     ProductName = fvi.ProductName ?? string.Empty;
-    FileVersion = fvi.FileVersion?.let(it => Version.Parse(it)) ?? Version.Parse("0.0.0");
+    FileVersion = fvi.FileVersion?.Let(it => Version.Parse(it)) ?? Version.Parse("0.0.0");
 
     return true;
   }

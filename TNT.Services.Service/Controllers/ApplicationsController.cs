@@ -138,7 +138,7 @@ public class ApplicationsController : Controller
   public async Task<IActionResult> DeleteConfirmed(Guid id)
   {
     Application? application = await _context.Application.FindAsync(id);
-    application?.also(async it =>
+    application?.Also(async it =>
      {
        _context.Application.Remove(it);
        await _context.SaveChangesAsync();

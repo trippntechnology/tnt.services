@@ -32,7 +32,7 @@ public abstract class BaseClient(Uri baseUri)
 
     if (!response.IsSuccessful)
     {
-      response.ErrorException?.also(it => throw it);
+      response.ErrorException?.Also(it => throw it);
     }
 
     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
