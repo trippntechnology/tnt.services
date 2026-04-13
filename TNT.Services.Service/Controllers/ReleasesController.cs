@@ -179,19 +179,19 @@ namespace TNT.Update.Service.Controllers
             return View(releasePlus);
         }
 
-        // POST: Releases/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var release = await _context.Release.FindAsync(id);
-            release?.Also(async it =>
-            {
-                _context.Release.Remove(it);
-                await _context.SaveChangesAsync();
-            });
-            return RedirectToAction(nameof(Index));
-        }
+    // POST: Releases/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+      var release = await _context.Release.FindAsync(id);
+      release?.Also(async it =>
+      {
+        _context.Release.Remove(it);
+        await _context.SaveChangesAsync();
+      });
+      return RedirectToAction(nameof(Index));
+    }
 
         private bool ReleaseExists(int id)
         {

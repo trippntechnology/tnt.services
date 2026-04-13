@@ -11,8 +11,8 @@ using TNT.Services.Service.Data;
 namespace TNT.Services.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241221223933_id_to_guid")]
-    partial class id_to_guid
+    [Migration("20251114161111_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,9 +218,9 @@ namespace TNT.Services.Service.Migrations
 
             modelBuilder.Entity("TNT.Services.Service.Models.Entities.Application", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -237,11 +237,12 @@ namespace TNT.Services.Service.Migrations
 
             modelBuilder.Entity("TNT.Services.Service.Models.Entities.Licensee", b =>
                 {
-                    b.Property<string>("ID")
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -261,10 +262,10 @@ namespace TNT.Services.Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ApplicationID")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationID")
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FileName")
@@ -272,6 +273,7 @@ namespace TNT.Services.Service.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Package")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("Version")

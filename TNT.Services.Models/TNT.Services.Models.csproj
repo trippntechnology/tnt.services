@@ -1,21 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Authors>Tripp'n Technology, LLC.</Authors>
-		<Company>$(Authors)</Company>
-		<ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
-		<Copyright>Copyright 2019 $(Authors)</Copyright>
-		<DebugType>embedded</DebugType>
 		<Description>TNT Services Models</Description>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<IncludeSymbols>False</IncludeSymbols>
-		<Nullable>enable</Nullable>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<TargetFramework>net9.0</TargetFramework>
 		<Title>TNT Services Models</Title>
-		<Version>1.0.2</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

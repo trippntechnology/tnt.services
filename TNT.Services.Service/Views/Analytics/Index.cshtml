@@ -1,0 +1,77 @@
+@model IEnumerable<TNT.Services.Service.Models.Entities.Analytic>
+
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<h1>Analytics</h1>
+
+<div class="mb-3">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label for="eventTypeFilter" class="form-label">Filter by Event Type</label>
+            <select id="eventTypeFilter" name="eventType" class="form-select">
+                <option value="">-- All Event Types --</option>
+                @foreach (var eventType in (List<string>)ViewBag.EventTypes ?? new List<string>())
+                {
+                    <option value="@eventType" selected="@(eventType == ViewBag.SelectedEventType)">@eventType</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Clear</a>
+        </div>
+    </form>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timestamp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Metadata)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Timestamp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventType)
+                </td>
+                <td>
+                    <span title="@item.Metadata" class="text-muted">
+                        @if (item.Metadata.Length > 50)
+                        {
+                            @(item.Metadata.Substring(0, 50) + "...")
+                        }
+                        else
+                        {
+                            @item.Metadata
+                        }
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -11,14 +11,14 @@ using TNT.Services.Service.Data;
 namespace TNT.Services.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240309041004_Licensees")]
-    partial class Licensees
+    [Migration("20260310151801_Analytics")]
+    partial class Analytics
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -216,11 +216,33 @@ namespace TNT.Services.Service.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TNT.Services.Service.Models.Entities.Application", b =>
+            modelBuilder.Entity("TNT.Services.Service.Models.Entities.Analytic", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Metadata")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Analytics");
+                });
+
+            modelBuilder.Entity("TNT.Services.Service.Models.Entities.Application", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -237,12 +259,12 @@ namespace TNT.Services.Service.Migrations
 
             modelBuilder.Entity("TNT.Services.Service.Models.Entities.Licensee", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -262,10 +284,10 @@ namespace TNT.Services.Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ApplicationID")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ApplicationID")
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FileName")
@@ -273,6 +295,7 @@ namespace TNT.Services.Service.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Package")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("Version")

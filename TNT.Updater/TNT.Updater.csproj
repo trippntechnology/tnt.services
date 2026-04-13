@@ -1,25 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Authors>$(Company)</Authors>
-    <Company>Tripp'n Technology, LLC.</Company>
-    <Copyright>Copyright © 2020 $(Company)</Copyright>
-    <Description>TNT Updater</Description>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Title>TNT Updater</Title>
-    <UseWindowsForms>true</UseWindowsForms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>TNT Updater</Description>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Title>TNT Updater</Title>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TNT.ArgumentParser" Version="2.1.0" />
-    <PackageReference Include="TNT.Commons" Version="2.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="TNT.ArgumentParser" Version="2.1.0" />
+		<PackageReference Include="TNT.Commons" Version="2.0.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TNT.Services.Client\TNT.Services.Client.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TNT.Services.Client\TNT.Services.Client.csproj" />
+	</ItemGroup>
 
 </Project>

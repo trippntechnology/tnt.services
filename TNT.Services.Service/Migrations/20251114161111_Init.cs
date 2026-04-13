@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TNT.Services.Service.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,7 @@ namespace TNT.Services.Service.Migrations
                 name: "Application",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    ID = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Secret = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -65,12 +64,26 @@ namespace TNT.Services.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Licensee",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ValidUntil = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Licensee", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Release",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ApplicationID = table.Column<int>(type: "INTEGER", nullable: false),
+                    ApplicationID = table.Column<Guid>(type: "TEXT", nullable: false),
                     FileName = table.Column<string>(type: "TEXT", nullable: false),
                     Version = table.Column<string>(type: "TEXT", nullable: false),
                     Package = table.Column<byte[]>(type: "BLOB", nullable: false),
@@ -245,6 +258,9 @@ namespace TNT.Services.Service.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Licensee");
 
             migrationBuilder.DropTable(
                 name: "Release");

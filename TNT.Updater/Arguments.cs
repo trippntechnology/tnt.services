@@ -52,11 +52,11 @@ public class Arguments : ArgumentParser.ArgumentParser
     {
         base.Parse(args, false);
 
-        string executable = Executable ?? throw new ArgumentException();
-        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executable);
-        CompanyName = fvi.CompanyName ?? string.Empty;
-        ProductName = fvi.ProductName ?? string.Empty;
-        FileVersion = fvi.FileVersion?.Let(it => Version.Parse(it)) ?? Version.Parse("0.0.0");
+    string executable = Executable ?? throw new ArgumentException();
+    FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executable);
+    CompanyName = fvi.CompanyName ?? string.Empty;
+    ProductName = fvi.ProductName ?? string.Empty;
+    FileVersion = fvi.FileVersion?.Let(it => Version.Parse(it)) ?? Version.Parse("0.0.0");
 
         return true;
     }

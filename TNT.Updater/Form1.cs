@@ -32,8 +32,8 @@ namespace TNT.Updater
             labelCurrentVersion.Text = appInfo.ReleaseVersion;
             labelReleaseDate.Text = appInfo.ReleaseDate?.DateTime.ToString();
 
-            var installedVersion = this.arguments.FileVersion;
-            var currentVersion = appInfo.ReleaseVersion?.Let(it => Version.Parse(it));
+      var installedVersion = this.arguments.FileVersion;
+      var currentVersion = appInfo.ReleaseVersion?.Let(it => Version.Parse(it));
 
             buttonInstall.Enabled = currentVersion > installedVersion;
 

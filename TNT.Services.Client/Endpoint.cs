@@ -8,4 +8,5 @@ internal sealed class Endpoint(Uri uri)
   public static Endpoint ApplicationInfo => new Endpoint(new Uri("/v2/ApplicationInfo", UriKind.Relative));
   public static Endpoint ReleaseInfo => new Endpoint(new Uri("/v2/ReleaseInfo", UriKind.Relative));
   public static Endpoint LicenseeInfo => new Endpoint(new Uri("v2/LicenseeInfo", UriKind.Relative));
+  public static Endpoint AddAnalytic => new Endpoint(new Uri("/v2/AddAnalytic", UriKind.Relative));
 }
