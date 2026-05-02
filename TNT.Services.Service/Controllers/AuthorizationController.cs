@@ -52,11 +52,13 @@ namespace TNT.Services.Service.Controllers
             Issuer = _configuration[Setting.ISSUER],
             Audience = _configuration[Setting.AUDIENCE],
             Subject = new ClaimsIdentity(claims),
-            Expires = _dateTimeUtil.UtcNow.DateTime.AddMinutes(1),
+            NotBefore = _dateTimeUtil.UtcNow.UtcDateTime,
+            Expires = _dateTimeUtil.UtcNow.UtcDateTime.AddMinutes(1),
             SigningCredentials = signIn
           };
 
-          return Ok(new JwtSecurityTokenHandler().CreateEncodedJwt(descriptor));
+          var token = new JwtSecurityTokenHandler().CreateEncodedJwt(descriptor);
+          return Content(token, "text/plain");
         }
         else
         {
