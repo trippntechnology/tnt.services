@@ -28,6 +28,19 @@
           <input asp-for="Secret" class="form-control" />
           <span asp-validation-for="Secret" class="text-danger"></span>
         </div>
+        <div class="form-group">
+          <label asp-for="CipherIV" class="control-label"></label>
+          <input asp-for="CipherIV" readonly="true" class="form-control" />
+          <span asp-validation-for="CipherIV" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+          <label asp-for="CipherKey" class="control-label"></label>
+          <input asp-for="CipherKey" readonly="true" class="form-control" />
+          <span asp-validation-for="CipherKey" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+                <button type="button" id="generateCipherBtn" style="padding-top: 20px" class="btn btn-secondary">Generate Cipher Key &amp; IV</button>
+        </div>
         <div class="form-group" style="padding-top: 20px">
           <input type="submit" value="Save" class="btn btn-primary" />
         </div>
@@ -41,4 +54,14 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+      document.getElementById('generateCipherBtn').addEventListener('click', function() {
+        // Generate random Base64 strings for IV (16 bytes) and Key (32 bytes)
+        const iv = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+        const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))));
+        
+        document.getElementById('CipherIV').value = iv;
+        document.getElementById('CipherKey').value = key;
+      });
+    </script>
 }
